@@ -29,19 +29,23 @@ let collectedBottles = 50;
 let bottleThrowTime = 0;
 let thrownBottleX = 0;
 let thrownBottleY = 0;
-
+let bossDefeatedAt = 0;
+let game_finished = false;
+let character_lost_at = 0;
 //------- Game config
 let JUMP_TIME = 200; // in ms
 let GAME_SPEED = 5;
+let BOSS_POSITION = 4300;
 let AUDIO_RUNNING = new Audio("audio/running.mp3");
 let AUDIO_JUMP = new Audio("audio/jump.mp3");
 let AUDIO_BOTTLE = new Audio("audio/bottle.mp3");
-let AUDIO_THROW = new Audio("audio/throw.mp3")
-let AUDIO_GLASS = new Audio("audio/glass.mp3")
-let AUDIO_CHICKEN = new Audio("audio/chicken.mp3")
-let AUDIO_BACKGROUND_MUSIC = new Audio("audio/mexican.mp3")
+let AUDIO_THROW = new Audio("audio/throw.mp3");
+let AUDIO_GLASS = new Audio("audio/glass.mp3");
+let AUDIO_CHICKEN = new Audio("audio/chicken.mp3");
+let AUDIO_BACKGROUND_MUSIC = new Audio("audio/mexican.mp3");
 AUDIO_BACKGROUND_MUSIC.loop = true;
 AUDIO_BACKGROUND_MUSIC.volume = 0.2;
+let AUDIO_WIN = new AUDIO("audio/win.mp3");
 
 function init() {
     canvas = document.getElementById("canvas");
@@ -52,10 +56,8 @@ function init() {
     calculateCloudOffSet();
     listenForKeys();
     calculateChickenPosition();
-    checkForCollision();;
+    checkForCollision();
 }
-
-
 
 function checkForCollision() {
     setInterval(() => {
@@ -65,7 +67,15 @@ function checkForCollision() {
             const chicken_x = chicken.position_x + bg_elemements;
             if (chicken_x - 40 < character_x && chicken_x + 40 > character_x) {
                 if (character_y > 190) {
-                    character_energy--;
+                    if (character_energy >= 0) {
+                        character_energy -= 5;
+                    } else {
+                        character_lost_at = new Date().getTime();
+                        game_finished = true;
+                    }
+
+
+
                 }
             }
         }
@@ -82,17 +92,28 @@ function checkForCollision() {
         }
 
         //check Final Boss
-        if (thrownBottleX > 1500 + bg_elemements - 200 && thrownBottleX < 1500 + bg_elemements + 200) {
-
-            finalBoss_energy = finalBoss_energy - 5;
-            console.log("finalBoss_energy" + finalBoss_energy)
-            AUDIO_GLASS.play()
+        if (
+            thrownBottleX > BOSS_POSITION + bg_elemements - 200 &&
+            thrownBottleX < BOSS_POSITION + bg_elemements + 200
+        ) {
+            if (finalBoss_energy >= 0) {
+                finalBoss_energy = finalBoss_energy - 5;
+                AUDIO_GLASS.play();
+            } else if (bossDefeatedAt == 0) {
+                bossDefeatedAt = new Date().getTime();
+                finishLevel();
+            }
         }
-
-
-
-
     }, 100);
+}
+
+function finishLevel() {
+    setTimeout(() => {
+        AUDIO_WIN.play();
+    }, 200);
+    game_finished = true;
+
+
 }
 
 function calculateChickenPosition() {
@@ -114,7 +135,12 @@ function createChickenList() {
         createChicken(2, 2000),
         createChicken(1, 2200),
         createChicken(2, 2550),
-        createChicken(1, 2650),
+        createChicken(2, 3000),
+        createChicken(1, 3150),
+        createChicken(2, 3400),
+        createChicken(2, 3700),
+        createChicken(1, 3850),
+        createChicken(1, 4000),
     ];
 }
 
@@ -126,39 +152,66 @@ function calculateCloudOffSet() {
 
 function draw() {
     drawbackground();
-    updateCharacter();
-    drawChicken();
-    drawBottles();
-    requestAnimationFrame(draw);
-    drawEnergyBar();
-    drawBottleInformation();
-    drawThrowBottle();
+    if (game_finished) {
+        drawFinalScreen();
+    } else {
+        updateCharacter();
+        drawChicken();
+        drawBottles();
+        requestAnimationFrame(draw);
+        drawEnergyBar();
+        drawBottleInformation();
+        drawThrowBottle();
+
+    }
     drawFinalBoss();
 }
 
-function drawFinalBoss() {
-    let chicken_x = 1450;
-    addBackgroundObject("img/4.Secuencias_Enemy_gigantón-Doña_Gallinota-/1.Caminata/G1.png", chicken_x, 75, 0.25, 1);
-    ctx.globalAlpha = 0.5;
-    ctx.fillStyle = "red";
-    ctx.fillRect(1450 + bg_elemements, 120, 2 * finalBoss_energy, 10);
-
-
-    ctx.globalAlpha = 0.2;
-    ctx.fillStyle = "black";
-    ctx.fillRect(1445 + bg_elemements, 115, 210, 20);
-
-
-
+function drawFinalScreen() {
+    ctx.fillStyle = "blue";
+    ctx.font = "80px Bradley Hand ITC";
+    let msg = "YOU WON!"
+    if (character_lost_at > 0) {
+        msg = "YOU LOST!"
+    }
+    ctx.fillText(msg, 250, 175);
 }
 
 
+function drawFinalBoss() {
+    let chicken_x = BOSS_POSITION;
+    let chicken_y = 75;
+    let bossImage =
+        "img/4.Secuencias_Enemy_gigantón-Doña_Gallinota-/1.Caminata/G1.png";
+    if (bossDefeatedAt > 0) {
+        bossImage =
+            "img/4.Secuencias_Enemy_gigantón-Doña_Gallinota-/4.Muerte/G24.png";
+        let timePassed = new Date().getTime() - bossDefeatedAt;
+        chicken_x = chicken_x + timePassed * 0.1;
+        chicken_y = chicken_y - timePassed;
+    }
+
+    addBackgroundObject(bossImage, chicken_x, chicken_y, 0.25, 1);
+    if (bossDefeatedAt == 0) {
+        ctx.globalAlpha = 0.5;
+        ctx.fillStyle = "red";
+        ctx.fillRect(
+            BOSS_POSITION - 30 + bg_elemements,
+            120,
+            2 * finalBoss_energy,
+            10
+        );
+        ctx.globalAlpha = 0.2;
+        ctx.fillStyle = "black";
+        ctx.fillRect(BOSS_POSITION - 32 + bg_elemements, 115, 210, 20);
+    }
+}
 
 function drawThrowBottle() {
     if (bottleThrowTime) {
         let timePassed = new Date().getTime() - bottleThrowTime;
         let gravity = Math.pow(9.81, timePassed / 300);
-        thrownBottleX = 220 + (timePassed * 0.8);
+        thrownBottleX = 220 + timePassed * 0.8;
         thrownBottleY = 260 - (timePassed * 0.4 - gravity);
         let base_image = new Image();
         base_image.src = "img/tabasco.png";
@@ -172,9 +225,7 @@ function drawThrowBottle() {
             );
         }
     }
-
 }
-
 
 function drawBottleInformation() {
     let base_image = new Image();
@@ -185,7 +236,7 @@ function drawBottleInformation() {
             15,
             60,
             base_image.width * 0.5,
-            base_image.height * 0.5,
+            base_image.height * 0.5
         );
     }
     ctx.font = "40px Bradley Hand ITC";
@@ -404,20 +455,13 @@ function listenForKeys() {
                 collectedBottles--;
                 bottleThrowTime = new Date().getTime();
             }
-
         }
-
-
 
         let timePassedSinceJump = new Date().getTime() - lastJumpStarted;
         if (e.code == "Space" && timePassedSinceJump > JUMP_TIME * 2) {
             //AUDIO_JUMP.play();
             lastJumpStarted = new Date().getTime();
         }
-
-
-
-
     });
 }
 
