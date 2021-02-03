@@ -1,6 +1,6 @@
-let imagePaths = ["img/pepe_1.png", "img/fwd_1.png", "img/fwd_2.png", "img/fwd_3.png", "img/fwd_4.png", "img/fwd_5.png", "img/fwd_6.png", "img/bwd_1.png", "img/bwd_2.png", "img/bwd_3.png", "img/bwd_4.png", "img/bwd_5.png",
+let imagePaths = ["img/fwd_1.png", "img/fwd_2.png", "img/fwd_3.png", "img/fwd_4.png", "img/fwd_5.png", "img/fwd_6.png", "img/bwd_1.png", "img/bwd_2.png", "img/bwd_3.png", "img/bwd_4.png", "img/bwd_5.png",
     "img/bwd_6.png", "img/chicken1.png", "img/chicken2.png", "img/chicken3.png", "img/pollito1.png", "img/pollito2.png", "img/pollito3.png", "img/bg_2.png", "img/bg_1.png", "img/clouds.png",
-    "img/sky.png", "img/bg.png"
+    "img/sky.png", "img/bg.png", ...characterStandRight, ...characterStandLeft, ...characterJumpRight
 
 ]
 let images = [];
@@ -16,15 +16,6 @@ function preloadImages() {
         images.push(image); // push image-path to images-array (which contains all image-paths)
     }
 }
-
-function preloadImages2() {
-    for (let index = 0; index < imagePaths.length; index++) {
-        const imagePath = imagePaths[index];
-        getFromCache(imagePath);
-    }
-
-}
-
 
 /**
  * Check if background-image is already loaded in cache; if not, create new image
