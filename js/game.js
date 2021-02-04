@@ -31,6 +31,8 @@ let characterGraphicsRight = [
     "img/fwd_6.png",
 ];
 let characterJumpRight = [
+    "img/jumpright1.png",
+    "img/jumpright2.png",
     "img/jumpright3.png",
     "img/jumpright4.png",
     "img/jumpright5.png",
@@ -38,6 +40,12 @@ let characterJumpRight = [
     "img/jumpright7.png",
     "img/jumpright8.png",
     "img/jumpright9.png",
+];
+
+let characterHurtRight = [
+    "img/hurtright1.png",
+    "img/hurtright2.png",
+    "img/hurtright3.png",
 ];
 
 let characterStandLeft = [
@@ -60,6 +68,26 @@ let characterGraphicsLeft = [
     "img/bwd_5.png",
     "img/bwd_6.png",
 ];
+
+let characterJumpLeft = [
+    "img/jumpleft1.png",
+    "img/jumpleft2.png",
+    "img/jumpleft3.png",
+    "img/jumpleft4.png",
+    "img/jumpleft5.png",
+    "img/jumpleft6.png",
+    "img/jumpleft7.png",
+    "img/jumpleft8.png",
+    "img/jumpleft9.png",
+];
+
+let characterHurtLeft = [
+    "img/hurtleft1.png",
+    "img/hurtleft2.png",
+    "img/hurtleft3.png",
+];
+let characterJumpIndex = 0;
+let characterHurtGraphicIndex = 0;
 let characterGraphicIndex = 0;
 let currentGallinita = "img/chicken1.png";
 let allGallinitas = [
@@ -84,8 +112,11 @@ let thrownBottleY = 0;
 let bossDefeatedAt = 0;
 let game_finished = false;
 let character_lost_at = 0;
+let isHurt = false;
 //------- Game config
-let JUMP_TIME = 350; // in ms
+let JUMP_TIME = 300; // in ms
+let HURT_TIME = 700;
+let DEAD_TIME = 500;
 let GAME_SPEED = 7;
 let BOSS_POSITION = 4300;
 let AUDIO_RUNNING = new Audio("audio/running.mp3");
@@ -111,6 +142,7 @@ function loadGame() {
     createGallinitasList();
     createPollintosList();
     checkForRunning();
+    checkForJumping();
     checkForGallinitas();
     checkForPollintos();
     calculateCloudOffSet();
@@ -118,7 +150,7 @@ function loadGame() {
     calculateGallinitaPosition();
     calculatePollitoPostion();
     checkForCollision();
-    checkForJumping();
+    checkIfHurt();
 }
 
 function checkForCollision() {
@@ -131,6 +163,7 @@ function checkForCollision() {
                 if (character_y > 110) {
                     if (character_energy >= 0) {
                         character_energy -= 2;
+                        isHurt = true;
                     } else {
                         character_lost_at = new Date().getTime();
                         game_finished = true;
@@ -147,6 +180,7 @@ function checkForCollision() {
                 if (character_y > 110) {
                     if (character_energy >= 0) {
                         character_energy -= 2;
+                        isHurt = true;
                     } else {
                         character_lost_at = new Date().getTime();
                         game_finished = true;
@@ -429,24 +463,59 @@ function createCharacter() {
     }, 125);
 }
 
-function checkForJumping() {
-    let index
-    console.log(isJumping)
-    setInterval(() => {
-        if (isJumping && directionRight) {
-            console.log(index)
+function checkIfHurt() {
+    let index;
 
-            if (index == 6) {
-                isJumping = false;
+    setInterval(function() {
+        if (isHurt && directionRight) {
+            if (index == 2) {
+                isHurt = false;
                 index = 0;
-                characterGraphicIndex = 0;
+                characterHurtGraphicIndex = 0;
             }
-            index = characterGraphicIndex % characterJumpRight.length;
-            currentCharacterImage = characterJumpRight[index];
-            characterGraphicIndex = characterGraphicIndex + 1;
+            index = characterHurtGraphicIndex % characterHurtRight.length;
+            currentCharacterImg = characterHurtRight[index];
+            characterHurtGraphicIndex = characterHurtGraphicIndex + 1;
         }
 
+        if (isHurt && directionLeft) {
+            if (index == 2) {
+                isHurt = false;
+                index = 0;
+                characterHurtGraphicIndex = 0;
+            }
+            index = characterHurtGraphicIndex % characterHurtLeft.length;
+            currentCharacterImg = characterHurtLeft[index];
+            characterHurtGraphicIndex = characterHurtGraphicIndex + 1;
+        }
+    }, 80);
+}
 
+function checkForJumping() {
+    let index;
+    setInterval(() => {
+        if (isJumping && directionRight) {
+            if (index == 8) {
+                isJumping = false;
+                index = 0;
+                characterJumpIndex = 0;
+            }
+            index = characterJumpIndex % characterJumpRight.length;
+            currentCharacterImg = characterJumpRight[index];
+            characterJumpIndex = characterJumpIndex + 1;
+        }
+
+        if (isJumping && directionLeft) {
+
+            if (index == 8) {
+                isJumping = false;
+                index = 0;
+                characterJumpIndex = 0;
+            }
+            index = characterJumpIndex % characterJumpLeft.length;
+            currentCharacterImg = characterJumpLeft[index];
+            characterJumpIndex = characterJumpIndex + 1;
+        }
     }, 125);
 }
 
