@@ -1,135 +1,3 @@
-let canvas;
-let ctx;
-let character_x = 200;
-let character_y = 115;
-let character_energy = 20;
-let finalBoss_energy = 100;
-let isMovingRight = false;
-let isMovingLeft = false;
-let isJumping = false;
-let bg_elements = 0;
-let lastJumpStarted = 0;
-let currentCharacterImg = "img/standright1.png";
-let characterStandRight = [
-    "img/standright1.png",
-    "img/standright2.png",
-    "img/standright3.png",
-    "img/standright4.png",
-    "img/standright5.png",
-    "img/standright6.png",
-    "img/standright7.png",
-    "img/standright8.png",
-    "img/standright9.png",
-    "img/standright10.png",
-];
-let characterGraphicsRight = [
-    "img/fwd_1.png",
-    "img/fwd_2.png",
-    "img/fwd_3.png",
-    "img/fwd_4.png",
-    "img/fwd_5.png",
-    "img/fwd_6.png",
-];
-let characterJumpRight = [
-    "img/jumpright1.png",
-    "img/jumpright2.png",
-    "img/jumpright3.png",
-    "img/jumpright4.png",
-    "img/jumpright5.png",
-    "img/jumpright6.png",
-    "img/jumpright7.png",
-    "img/jumpright8.png",
-    "img/jumpright9.png",
-];
-
-let characterHurtRight = [
-    "img/hurtright1.png",
-    "img/hurtright2.png",
-    "img/hurtright3.png",
-];
-
-let characterStandLeft = [
-    "img/standleft1.png",
-    "img/standleft2.png",
-    "img/standleft3.png",
-    "img/standleft4.png",
-    "img/standleft5.png",
-    "img/standleft6.png",
-    "img/standleft7.png",
-    "img/standleft8.png",
-    "img/standleft9.png",
-    "img/standleft10.png",
-];
-let characterGraphicsLeft = [
-    "img/bwd_1.png",
-    "img/bwd_2.png",
-    "img/bwd_3.png",
-    "img/bwd_4.png",
-    "img/bwd_5.png",
-    "img/bwd_6.png",
-];
-
-let characterJumpLeft = [
-    "img/jumpleft1.png",
-    "img/jumpleft2.png",
-    "img/jumpleft3.png",
-    "img/jumpleft4.png",
-    "img/jumpleft5.png",
-    "img/jumpleft6.png",
-    "img/jumpleft7.png",
-    "img/jumpleft8.png",
-    "img/jumpleft9.png",
-];
-
-let characterHurtLeft = [
-    "img/hurtleft1.png",
-    "img/hurtleft2.png",
-    "img/hurtleft3.png",
-];
-let characterJumpIndex = 0;
-let characterHurtGraphicIndex = 0;
-let characterGraphicIndex = 0;
-let currentGallinita = "img/chicken1.png";
-let allGallinitas = [
-    "img/chicken1.png",
-    "img/chicken2.png",
-    "img/chicken3.png",
-];
-let gallinitasIndex = 0;
-let gallinitas = [];
-let currentPollito = "img/pollito1.png";
-let allPollitos = ["img/pollito1.png", "img/pollito2.png", "img/pollito3.png"];
-let pollitoIndex = 0;
-let pollitos = [];
-let cloudOffSet = 0;
-let directionRight = true;
-let directionLeft = false;
-let placedBottles = [750, 1000, 1500, 1850, 2100, 2400, 2700, 3050, 3400, 3800];
-let collectedBottles = 50;
-let bottleThrowTime = 0;
-let thrownBottleX = 0;
-let thrownBottleY = 0;
-let bossDefeatedAt = 0;
-let game_finished = false;
-let character_lost_at = 0;
-let isHurt = false;
-//------- Game config
-let JUMP_TIME = 300; // in ms
-let HURT_TIME = 700;
-let DEAD_TIME = 500;
-let GAME_SPEED = 7;
-let BOSS_POSITION = 4300;
-let AUDIO_RUNNING = new Audio("audio/running.mp3");
-let AUDIO_JUMP = new Audio("audio/jump.mp3");
-let AUDIO_BOTTLE = new Audio("audio/bottle.mp3");
-let AUDIO_THROW = new Audio("audio/throw.mp3");
-let AUDIO_GLASS = new Audio("audio/glass.mp3");
-let AUDIO_CHICKEN = new Audio("audio/chicken.mp3");
-let AUDIO_BACKGROUND_MUSIC = new Audio("audio/mexican.mp3");
-AUDIO_BACKGROUND_MUSIC.loop = true;
-AUDIO_BACKGROUND_MUSIC.volume = 0.2;
-let cache = {};
-
 function init() {
     preloadImages();
     canvas = document.getElementById("canvas");
@@ -149,8 +17,47 @@ function loadGame() {
     listenForKeys();
     calculateGallinitaPosition();
     calculatePollitoPostion();
+    calculateBossPosition();
     checkForCollision();
     checkIfHurt();
+}
+
+function calculateBossPosition() {
+    setInterval(() => {
+        adaptBossMovements();
+        currentBossIndex++;
+    }, 70);
+}
+
+function adaptBossMovements() {
+    if (finalBoss_energy == 100) {
+        // if boss enery is intact, he is moving around his initial spot
+        calculatePatrollingBoss();
+    }
+}
+
+function calculatePatrollingBoss() {
+    bossPatrollingForward();
+    bossPatrollingBackward();
+}
+
+function bossPatrollingForward() {
+    if (BOSS_POSITION_X > 4100 && !bossTurning) {
+        BOSS_POSITION_X -= 10;
+    }
+    if (BOSS_POSITION_X <= 4100) {
+        bossTurning = true;
+    }
+}
+
+
+function bossPatrollingBackward() {
+    if (BOSS_POSITION_X <= 4300 && bossTurning) {
+        BOSS_POSITION_X += 10;
+    }
+    if (BOSS_POSITION_X >= (4300)) {
+        bossTurning = false;
+    }
 }
 
 function checkForCollision() {
@@ -201,20 +108,21 @@ function checkForCollision() {
                 }
             }
         }
-
-        //check Final Boss
-        if (
-            thrownBottleX > BOSS_POSITION + bg_elements - 200 &&
-            thrownBottleX < BOSS_POSITION + bg_elements + 200
-        ) {
-            if (finalBoss_energy >= 0) {
-                finalBoss_energy = finalBoss_energy - 5;
-                //AUDIO_GLASS.play();
-            } else if (bossDefeatedAt == 0) {
-                bossDefeatedAt = new Date().getTime();
-                finishLevel();
+        /*
+            //check Final Boss
+            if (
+                thrownBottleX > BOSS_POSITION + bg_elements - 200 &&
+                thrownBottleX < BOSS_POSITION + bg_elements + 200
+            ) {
+                if (finalBoss_energy >= 0) {
+                    finalBoss_energy = finalBoss_energy - 5;
+                    //AUDIO_GLASS.play();
+                } else if (bossDefeatedAt == 0) {
+                    bossDefeatedAt = new Date().getTime();
+                    finishLevel();
+                }
             }
-        }
+            */
     }, 100);
 }
 
@@ -277,38 +185,43 @@ function draw() {
         drawEnergyBar();
         drawBottleInformation();
         drawThrowBottle();
+        drawBossEnergyBar();
     }
-    drawFinalBoss();
+    drawFinalBoss2();
 }
 
-function drawFinalBoss() {
-    let chicken_x = BOSS_POSITION;
-    let chicken_y = 75;
-    let bossImage =
-        "img/4.Secuencias_Enemy_gigantón-Doña_Gallinota-/1.Caminata/G1.png";
-    if (bossDefeatedAt > 0) {
-        bossImage =
-            "img/4.Secuencias_Enemy_gigantón-Doña_Gallinota-/4.Muerte/G24.png";
-        let timePassed = new Date().getTime() - bossDefeatedAt;
-        chicken_x = chicken_x + timePassed * 0.1;
-        chicken_y = chicken_y - timePassed;
+function drawBossEnergyBar() {
+    let energyBarPathBoss = "img/bossenergy/" + finalBoss_energy + "_.png";
+    if (finalBoss_energy <= 0) {
+        energyBarPathBoss = 'img/7.Marcadores/Barra/Marcador vida/naranja/0_.png';
     }
+    addBackgroundObject(energyBarPathBoss, BOSS_POSITION_X + 50, 80, 0.35, 1);
+}
 
-    addBackgroundObject(bossImage, chicken_x, chicken_y, 0.25, 1);
-    if (bossDefeatedAt == 0) {
-        ctx.globalAlpha = 0.5;
-        //ctx.fillStyle = "red";
-        ctx.fillRect(
-            BOSS_POSITION - 30 + bg_elements,
-            120,
-            2 * finalBoss_energy,
-            10
-        );
-        ctx.globalAlpha = 0.2;
-        //ctx.fillStyle = "black";
-        ctx.fillRect(BOSS_POSITION - 32 + bg_elements, 115, 210, 20);
+
+function drawFinalBoss2() {
+    let src = currentBossImage;
+    changeBossAnimations();
+    addBackgroundObject(src, BOSS_POSITION_X, BOSS_POSITION_Y, 0.25, 1);
+    //currentBossIndex++;
+}
+
+function changeBossAnimations() {
+    let index;
+    animateWalkingBoss(index);
+    //animateAttackingBoss(index);
+    //animateWoundedBoss(index);
+    //animateBossDefeat(index);
+}
+
+function animateWalkingBoss(index) {
+    if (finalBoss_energy == 100) {
+        index = currentBossIndex % bossGraphicsWalkingLeft.length;
+        currentBossImage = bossGraphicsWalkingLeft[index];
+
     }
 }
+
 
 function drawThrowBottle() {
     if (bottleThrowTime) {
@@ -506,7 +419,6 @@ function checkForJumping() {
         }
 
         if (isJumping && directionLeft) {
-
             if (index == 8) {
                 isJumping = false;
                 index = 0;
@@ -516,7 +428,7 @@ function checkForJumping() {
             currentCharacterImg = characterJumpLeft[index];
             characterJumpIndex = characterJumpIndex + 1;
         }
-    }, 125);
+    }, 80);
 }
 
 function checkForRunning() {
