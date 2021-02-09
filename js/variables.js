@@ -117,6 +117,10 @@ let currentBossIndex = 0;
 let currentBossImage = "img/boss1.png";
 let bossGraphicsWalkingLeft = ["img/boss1.png", "img/boss2.png", "img/boss3.png", "img/boss4.png"]
 let bossTurning = false;
+let bossIsWounded = false;
+let updateIntervals = [];
+let timeSinceLastBottleCollision = 1000;
+let timeOfBottleCollision;
 //------- Game config
 let JUMP_TIME = 300; // in ms
 let HURT_TIME = 700;
@@ -133,4 +137,8 @@ let AUDIO_CHICKEN = new Audio("audio/chicken.mp3");
 let AUDIO_BACKGROUND_MUSIC = new Audio("audio/mexican.mp3");
 AUDIO_BACKGROUND_MUSIC.loop = true;
 AUDIO_BACKGROUND_MUSIC.volume = 0.2;
+const DURATION_WOUNDED_STATE = 750;
+const COLLISION_ENERGY_LOSS = 20;
+let BOSS_WIDTH = 350;
+let BOSS_HEIGHT = 400;
 let cache = {};

@@ -61,73 +61,145 @@ function bossPatrollingBackward() {
 }
 
 function checkForCollision() {
-    setInterval(() => {
-        //check pollitos
-        for (let i = 0; i < pollitos.length; i++) {
-            const pollito = pollitos[i];
-            const pollito_x = pollito.position_x + bg_elements;
-            if (pollito_x - 40 < character_x && pollito_x + 40 > character_x) {
-                if (character_y > 110) {
-                    if (character_energy >= 0) {
-                        character_energy -= 2;
-                        isHurt = true;
-                    } else {
-                        character_lost_at = new Date().getTime();
-                        game_finished = true;
-                    }
-                }
-            }
-        }
+    let updateCollisionInterval = setInterval(() => {
+        checkPollitosCollison();
+        checkGallinitasCollison();
+        checkBottleCollison();
+        checkBossBottleCollison();
+        //checkBossCollision();
 
-        //check gallinitas
-        for (let i = 0; i < gallinitas.length; i++) {
-            const gallinita = gallinitas[i];
-            const gallinita_x = gallinita.position_x + bg_elements;
-            if (gallinita_x - 40 < character_x && gallinita_x + 40 > character_x) {
-                if (character_y > 110) {
-                    if (character_energy >= 0) {
-                        character_energy -= 2;
-                        isHurt = true;
-                    } else {
-                        character_lost_at = new Date().getTime();
-                        game_finished = true;
-                    }
-                }
-            }
-        }
-        // check Bottle
-        for (let i = 0; i < placedBottles.length; i++) {
-            const bottle_X = placedBottles[i] + bg_elements;
-            if (bottle_X - 40 < character_x && bottle_X + 40 > character_x) {
-                console.log("bottle_x", bottle_X);
-                console.log("character_y", character_y);
-                if (character_y > 110) {
-                    placedBottles.splice(i, 1);
-                    //AUDIO_BOTTLE.play();
-                    collectedBottles++;
-                }
-            }
-        }
-        /*
-            //check Final Boss
-            if (
-                thrownBottleX > BOSS_POSITION + bg_elements - 200 &&
-                thrownBottleX < BOSS_POSITION + bg_elements + 200
-            ) {
-                if (finalBoss_energy >= 0) {
-                    finalBoss_energy = finalBoss_energy - 5;
-                    //AUDIO_GLASS.play();
-                } else if (bossDefeatedAt == 0) {
-                    bossDefeatedAt = new Date().getTime();
-                    finishLevel();
-                }
-            }
-            */
-    }, 100);
+    }, 125);
+    updateIntervals.push(updateCollisionInterval); // push interval-variable to array to enable clearing of interval if game ends
+
 }
+
+
+function checkPollitosCollison() {
+    for (let i = 0; i < pollitos.length; i++) {
+        const pollito = pollitos[i];
+        const pollito_x = pollito.position_x + bg_elements;
+        if (pollito_x - 40 < character_x && pollito_x + 40 > character_x) {
+            if (character_y > 110) {
+                if (character_energy >= 0) {
+                    character_energy -= 2;
+                    isHurt = true;
+                } else {
+                    character_lost_at = new Date().getTime();
+                    game_finished = true;
+                }
+            }
+        }
+    }
+}
+
+function checkGallinitasCollison() {
+    for (let i = 0; i < gallinitas.length; i++) {
+        const gallinita = gallinitas[i];
+        const gallinita_x = gallinita.position_x + bg_elements;
+        if (gallinita_x - 40 < character_x && gallinita_x + 40 > character_x) {
+            if (character_y > 110) {
+                if (character_energy >= 0) {
+                    character_energy -= 2;
+                    isHurt = true;
+                } else {
+                    character_lost_at = new Date().getTime();
+                    game_finished = true;
+                }
+            }
+        }
+    }
+}
+
+
+function checkBottleCollison() {
+    for (let i = 0; i < placedBottles.length; i++) {
+        const bottle_X = placedBottles[i] + bg_elements;
+        if (bottle_X - 40 < character_x && bottle_X + 40 > character_x) {
+            console.log("bottle_x", bottle_X);
+            console.log("character_y", character_y);
+            if (character_y > 110) {
+                placedBottles.splice(i, 1);
+                //AUDIO_BOTTLE.play();
+                collectedBottles++;
+            }
+        }
+    }
+}
+
+function checkBossBottleCollison() {
+    timeSinceLastBottleCollision = new Date().getTime() - timeOfBottleCollision;
+    if (timeSinceLastBottleCollision > DURATION_WOUNDED_STATE) { // boss is immune if still in wounded state
+        bossIsWounded = false;
+    }
+    let collisionTrue = checkCollisionCondition(thrownBottleX, 80, BOSS_POSITION_X + bg_elements, BOSS_WIDTH, thrownBottleY, 65, BOSS_POSITION_Y, BOSS_HEIGHT);
+    if (collisionTrue && !bossIsWounded) {
+        hurtBossAnimation();
+    }
+
+    /*
+    if (
+        thrownBottleX > BOSS_POSITION_X + bg_elements - 200 &&
+        thrownBottleX < BOSS_POSITION_X + bg_elements + 200
+    ) {
+        if (finalBoss_energy > 0) {
+            finalBoss_energy = finalBoss_energy - 5;
+            bossIsWounded = true;
+            //AUDIO_GLASS.play();
+        } else if (bossDefeatedAt == 0) {
+            bossDefeatedAt = new Date().getTime();
+            finishLevel();
+        }
+    }
+    */
+}
+
+function hurtBossAnimation() {
+    timeOfBottleCollision = new Date().getTime();
+    reduceBossEnergy();
+}
+
+function reduceBossEnergy() {
+    if (finalBoss_energy > 0) {
+        finalBoss_energy -= COLLISION_ENERGY_LOSS;
+        bossIsWounded = true;
+    }
+    // Trigger levelFinish-Animation if boss energy <= 0
+    if (finalBoss_energy <= 0 && bossDefeatedAt == 0) {
+        bossDefeatedAt = new Date().getTime();
+        finishLevel();
+    }
+}
+
+
+
+/**
+ * General function to check if collision has happened between two elements according to x- & y-coordinates
+ * 
+ * @param {number} collider_1_x - x-coordinate of the 1st collision element
+ * @param {number} collider_1_width - width of the 1st collision element 
+ * @param {number} collider_2_x - x-coordinate of the 2nd collision element
+ * @param {number} collider_2_width - width of the 2nd collision element 
+ * @param {number} collider_1_y - Y-coordinate of the 1st collision element
+ * @param {number} collider_1_height - height of the 1st collision element 
+ * @param {number} collider_2_y y-coordinate of the 2nd collision element
+ * @param {number} collider_2_height - height of the 2nd collision element 
+ */
+function checkCollisionCondition(collider_1_x, collider_1_width, collider_2_x, collider_2_width, collider_1_y, collider_1_height, collider_2_y, collider_2_height) {
+    // defines range for x-position in which collision is detected
+    let x_condition = ((collider_1_x - collider_1_width / 2) < (collider_2_x + collider_2_width / 2) && (collider_1_x + collider_1_width / 2) > (collider_2_x - collider_2_width / 2));
+    // defines range for y-position in which collision is detected
+    let y_condition = ((collider_1_y + collider_1_height) > collider_2_y) && (collider_1_y < (collider_2_y + collider_2_height));
+    return (x_condition && y_condition);
+}
+
+
+
+
+
 
 function finishLevel() {
     game_finished = true;
+    refreshIntervals();
 }
 
 function calculateGallinitaPosition() {
@@ -193,7 +265,7 @@ function draw() {
 function drawBossEnergyBar() {
     let energyBarPathBoss = "img/bossenergy/" + finalBoss_energy + "_.png";
     if (finalBoss_energy <= 0) {
-        energyBarPathBoss = 'img/7.Marcadores/Barra/Marcador vida/naranja/0_.png';
+        energyBarPathBoss = 'img/bossenergy/0_.png';
     }
     addBackgroundObject(energyBarPathBoss, BOSS_POSITION_X + 50, 80, 0.35, 1);
 }
@@ -328,6 +400,7 @@ function drawFinalScreen() {
     let msg = "YOU WON!";
     if (character_lost_at > 0) {
         msg = "YOU LOST!";
+        refreshIntervals();
     }
     ctx.fillText(msg, 250, 175);
 }
@@ -588,4 +661,11 @@ function listenForKeys() {
             isMovingLeft = false;
         }
     });
+}
+
+function refreshIntervals() {
+    updateIntervals.forEach((interval) => {
+        clearInterval(interval)
+    });
+    updateIntervals = [];
 }
