@@ -7,6 +7,7 @@ let finalBoss_energy = 100;
 let isMovingRight = false;
 let isMovingLeft = false;
 let isJumping = false;
+let isDead = false;
 let bg_elements = 0;
 let lastJumpStarted = 0;
 let currentCharacterImg = "img/standright1.png";
@@ -114,13 +115,25 @@ let game_finished = false;
 let character_lost_at = 0;
 let isHurt = false;
 let currentBossIndex = 0;
+let bossIsDead = false;
+let gameStarted = false;
 let currentBossImage = "img/boss1.png";
 let bossGraphicsWalkingLeft = ["img/boss1.png", "img/boss2.png", "img/boss3.png", "img/boss4.png"]
+let bossGraphicsAttacking = ["img/bossattack1.png", "img/bossattack2.png", "img/bossattack3.png", "img/bossattack4.png", "img/bossattack5.png", "img/bossattack6.png", "img/bossattack7.png", "img/bossattack8.png", "img/bossattack9.png", "img/bossattack10.png", "img/bossattack11.png", "img/bossattack12.png",
+    "img/bossattack13.png", "img/bossattack14.png", "img/bossattack15.png", "img/bossattack16.png"
+]
+let bossWoundedGraphics = ["img/bosswounded1.png", "img/bosswounded2.png", "img/bosswounded3.png"]
+let bossGraphicsDead = ["img/bossdead1.png", "img/bossdead2.png", "img/bossdead3.png"];
+let bossEnergy = ["img/bossenergy/0_.png", "img/bossenergy/20_.png", "img/bossenergy/40_.png", "img/bossenergy/60_.png", "img/bossenergy/80_.png", "img/bossenergy/100_.png"]
+
 let bossTurning = false;
 let bossIsWounded = false;
 let updateIntervals = [];
 let timeSinceLastBottleCollision = 1000;
 let timeOfBottleCollision;
+let bossAttack = false;
+let characterHeight;
+let characterWidth;
 //------- Game config
 let JUMP_TIME = 300; // in ms
 let HURT_TIME = 700;

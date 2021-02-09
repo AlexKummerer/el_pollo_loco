@@ -23,17 +23,23 @@ function loadGame() {
 }
 
 function calculateBossPosition() {
-    setInterval(() => {
+    let updateBossInterval = setInterval(() => {
         adaptBossMovements();
         currentBossIndex++;
     }, 70);
+    updateIntervals.push(updateBossInterval);
 }
 
 function adaptBossMovements() {
     if (finalBoss_energy == 100) {
         // if boss enery is intact, he is moving around his initial spot
         calculatePatrollingBoss();
+    } else if (finalBoss_energy < 100) { // if boss_energy is reduced, he will attack
+        BOSS_POSITION_X -= 15;
+    } else if (finalBoss_energy < 60) { // if boss_energy is reduced, he will attack
+        BOSS_POSITION_X -= 20;
     }
+
 }
 
 function calculatePatrollingBoss() {
@@ -66,13 +72,36 @@ function checkForCollision() {
         checkGallinitasCollison();
         checkBottleCollison();
         checkBossBottleCollison();
-        //checkBossCollision();
+        checkBossCollision()
 
     }, 125);
     updateIntervals.push(updateCollisionInterval); // push interval-variable to array to enable clearing of interval if game ends
 
 }
 
+function checkBossCollision() {
+    if (checkCollisionCondition(character_x, characterWidth - 60, BOSS_POSITION_X + bg_elements, BOSS_WIDTH - 100, character_y, characterHeight, BOSS_POSITION_Y, BOSS_HEIGHT)) {
+        reduceCharacterEnergy();
+        bossAttack = true;
+    }
+}
+
+function reduceCharacterEnergy() {
+    character_energy -= COLLISION_ENERGY_LOSS; // reduce energy when hit by enemy
+    if (bossAttack) {
+        character_energy == 0; // immediate death when character collides with boss
+    }
+    if (character_energy <= 0) {
+        gameOver();
+    }
+}
+
+function gameOver() {
+    isDead = true;
+    characterDefeatedAt = new Date().getTime();
+    setTimeout(refreshIntervals, 3000);
+
+}
 
 function checkPollitosCollison() {
     for (let i = 0; i < pollitos.length; i++) {
@@ -136,21 +165,6 @@ function checkBossBottleCollison() {
         hurtBossAnimation();
     }
 
-    /*
-    if (
-        thrownBottleX > BOSS_POSITION_X + bg_elements - 200 &&
-        thrownBottleX < BOSS_POSITION_X + bg_elements + 200
-    ) {
-        if (finalBoss_energy > 0) {
-            finalBoss_energy = finalBoss_energy - 5;
-            bossIsWounded = true;
-            //AUDIO_GLASS.play();
-        } else if (bossDefeatedAt == 0) {
-            bossDefeatedAt = new Date().getTime();
-            finishLevel();
-        }
-    }
-    */
 }
 
 function hurtBossAnimation() {
@@ -166,6 +180,9 @@ function reduceBossEnergy() {
     // Trigger levelFinish-Animation if boss energy <= 0
     if (finalBoss_energy <= 0 && bossDefeatedAt == 0) {
         bossDefeatedAt = new Date().getTime();
+        bossIsDead = true;
+        console.log("bossIsDead", bossIsDead)
+        console.log("bossDefeatedAt", bossDefeatedAt)
         finishLevel();
     }
 }
@@ -194,11 +211,9 @@ function checkCollisionCondition(collider_1_x, collider_1_width, collider_2_x, c
 
 
 
-
-
-
 function finishLevel() {
     game_finished = true;
+    gameStarted = false;
     refreshIntervals();
 }
 
@@ -275,21 +290,50 @@ function drawFinalBoss2() {
     let src = currentBossImage;
     changeBossAnimations();
     addBackgroundObject(src, BOSS_POSITION_X, BOSS_POSITION_Y, 0.25, 1);
-    //currentBossIndex++;
 }
 
 function changeBossAnimations() {
     let index;
     animateWalkingBoss(index);
-    //animateAttackingBoss(index);
-    //animateWoundedBoss(index);
-    //animateBossDefeat(index);
+    animateAttackingBoss(index);
+    animateWoundedBoss(index);
+    animateBossDefeat(index);
 }
 
 function animateWalkingBoss(index) {
-    if (finalBoss_energy == 100) {
+    if (finalBoss_energy <= 100) {
         index = currentBossIndex % bossGraphicsWalkingLeft.length;
         currentBossImage = bossGraphicsWalkingLeft[index];
+    }
+}
+
+function animateAttackingBoss(index) {
+    if (finalBoss_energy <= 80 && finalBoss_energy > 0) {
+        index = currentBossIndex % bossGraphicsAttacking.length;
+        currentBossImage = bossGraphicsAttacking[index];
+    }
+
+}
+
+function animateWoundedBoss(index) {
+    if (bossIsWounded) {
+        index = currentBossIndex % bossWoundedGraphics.length;
+        currentBossImage = bossWoundedGraphics[index];
+    }
+
+
+}
+
+function animateBossDefeat(index) {
+    if (bossIsDead == true) {
+        let timePassed = new Date().getTime() - bossDefeatedAt;
+        BOSS_POSITION_X += timePassed / 18;
+        BOSS_POSITION_Y -= timePassed / 14;
+        index = currentBossIndex % bossGraphicsDead.length;
+        currentBossImage = bossGraphicsDead[index];
+        console.log("timePassed", timePassed)
+        console.log("BOSS_POSITION_X", BOSS_POSITION_X)
+        console.log("BOSS_POSITION_Y", BOSS_POSITION_Y)
 
     }
 }
