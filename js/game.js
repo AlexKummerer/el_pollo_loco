@@ -5,22 +5,20 @@ function init() {
     draw();
 }
 
-
 function loadGame() {
     gameStarted = true;
     runGame();
 }
 
 function runGame() {
+    calculateDrawingDetails();
     createGallinitasList();
     createPollintosList();
-    calculateDrawingDetails();
     if (!gameFinished) {
         listenForKeys();
         checkForCollision();
         checkForGallinitas();
         checkForPollintos();
-        //moveOnMobile();
     }
 }
 
@@ -32,14 +30,13 @@ function checkForCollision() {
     }, 125);
     checkGallinitasCollison();
     checkPollitosCollison();
-
 }
 
 function checkBossCollision() {
     if (
         checkCollisionCondition(
             character_x,
-            characterWidth - 480,
+            characterWidth - 400,
             BOSS_POSITION_X + bg_elements,
             BOSS_WIDTH,
             character_y,
@@ -66,7 +63,8 @@ function reduceCharacterEnergy() {
 
 function gameOver() {
     isDead = true;
-    game_finished = true;
+    gameFinished = true;
+    gameStarted = false;
     characterDefeatedAt = new Date().getTime();
     character_lost_at = new Date().getTime();
 }
@@ -81,12 +79,10 @@ function checkPollitosCollison() {
                     if (character_energy >= 0) {
                         reduceCharacterEnergy();
                         isHurt = true;
-
                     }
                 }
             }
         }
-
     }, 125);
 }
 
@@ -128,11 +124,11 @@ function checkBossBottleCollison() {
     }
     let collisionTrue = checkCollisionCondition(
         thrownBottleX,
-        70,
+        10,
         BOSS_POSITION_X + bg_elements,
         BOSS_WIDTH,
         thrownBottleY,
-        65,
+        10,
         BOSS_POSITION_Y,
         BOSS_HEIGHT
     );
@@ -163,36 +159,22 @@ function reduceBossEnergy() {
 
 /**
  * General function to check if collision has happened between two elements according to x- & y-coordinates
- *
+ * 
  * @param {number} collider_1_x - x-coordinate of the 1st collision element
- * @param {number} collider_1_width - width of the 1st collision element
+ * @param {number} collider_1_width - width of the 1st collision element 
  * @param {number} collider_2_x - x-coordinate of the 2nd collision element
- * @param {number} collider_2_width - width of the 2nd collision element
+ * @param {number} collider_2_width - width of the 2nd collision element 
  * @param {number} collider_1_y - Y-coordinate of the 1st collision element
- * @param {number} collider_1_height - height of the 1st collision element
+ * @param {number} collider_1_height - height of the 1st collision element 
  * @param {number} collider_2_y y-coordinate of the 2nd collision element
- * @param {number} collider_2_height - height of the 2nd collision element
+ * @param {number} collider_2_height - height of the 2nd collision element 
  */
-function checkCollisionCondition(
-    collider_1_x,
-    collider_1_width,
-    collider_2_x,
-    collider_2_width,
-    collider_1_y,
-    collider_1_height,
-    collider_2_y,
-    collider_2_height
-) {
+function checkCollisionCondition(collider_1_x, collider_1_width, collider_2_x, collider_2_width, collider_1_y, collider_1_height, collider_2_y, collider_2_height) {
     // defines range for x-position in which collision is detected
-    let x_condition =
-        collider_1_x - collider_1_width / 2 < collider_2_x + collider_2_width / 2 &&
-        collider_1_x + collider_1_width / 2 > collider_2_x - collider_2_width / 2;
+    let x_condition = ((collider_1_x - collider_1_width / 2) < (collider_2_x + collider_2_width / 2) && (collider_1_x + collider_1_width / 2) > (collider_2_x - collider_2_width / 2));
     // defines range for y-position in which collision is detected
-    let y_condition =
-        collider_1_y + collider_1_height >
-        (collider_2_y && collider_1_y) <
-        collider_2_y + collider_2_height;
-    return x_condition && y_condition;
+    let y_condition = ((collider_1_y + collider_1_height) > collider_2_y) && (collider_1_y < (collider_2_y + collider_2_height));
+    return (x_condition && y_condition);
 }
 
 function finishLevel() {
@@ -305,3 +287,44 @@ function listenForKeys() {
         }
     });
 }
+
+function removeKeyListener() {
+    document.removeEventListener("keydown", (e) => {
+        const k = e.key;
+        if (k == "ArrowRight") {
+            isMovingRight = false;
+        }
+
+        if (k == "ArrowLeft") {
+            isMovingLeft = false;
+        }
+
+        if (k == "d" && collectedBottles > 0) {
+            let timePassed = new Date().getTime() - bottleThrowTime;
+            console.log(timePassed);
+            if (timePassed > 1000) {
+                //AUDIO_THROW.play();
+                collectedBottles--;
+
+                bottleThrowTime = new Date().getTime();
+            }
+        }
+
+        let timePassedSinceJump = new Date().getTime() - lastJumpStarted;
+        if (e.code == "Space" && timePassedSinceJump > JUMP_TIME * 2 && !isHurt) {
+            //AUDIO_JUMP.play();
+            isJumping = false;
+            lastJumpStarted = new Date().getTime();
+        }
+    });
+    document.removeEventListener("keyup", (e) => {
+        const k = e.key;
+        if (k == "ArrowRight") {
+            isMovingRight = false;
+        }
+
+        if (k == "ArrowLeft") {
+            isMovingLeft = false;
+        }
+    });
+};

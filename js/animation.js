@@ -223,10 +223,13 @@ function animateBossDefeat(index) {
 }
 
 function drawFinalScreen() {
-    if (gameFinished) {
+
+    if (gameFinished && !isDead) {
         drawWinScreen();
+
     } else if (isDead) {
         drawDefeatScreen();
+        removeKeyListener();
     }
 }
 
@@ -234,12 +237,14 @@ function drawWinScreen() {
     prepareNotification();
     ctx.fillText('Congrats!', canvas.width / 2, 200);
     ctx.fillText(' You won!', canvas.width / 2, 300);
+
 }
 
 function drawDefeatScreen() {
     prepareNotification();
     ctx.fillText('Oh nooo!', canvas.width / 2, 200);
     ctx.fillText(' You lost!', canvas.width / 2, 300);
+
 }
 
 /**
