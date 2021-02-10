@@ -8,6 +8,7 @@ let isMovingRight = false;
 let isMovingLeft = false;
 let isJumping = false;
 let isDead = false;
+let gameFinished = false;
 let bg_elements = 0;
 let lastJumpStarted = 0;
 let currentCharacterImg = "img/standright1.png";
@@ -90,6 +91,7 @@ let characterHurtLeft = [
 let characterJumpIndex = 0;
 let characterHurtGraphicIndex = 0;
 let characterGraphicIndex = 0;
+let deadCharacter = ["img/dead1.png", "img/dead2.png", "img/dead3.png", "img/dead4.png", "img/dead5.png", "img/dead6.png", "img/dead7.png"]
 let currentGallinita = "img/chicken1.png";
 let allGallinitas = [
     "img/chicken1.png",
@@ -134,6 +136,8 @@ let timeOfBottleCollision;
 let bossAttack = false;
 let characterHeight;
 let characterWidth;
+let isWounded = false;
+let timeOfCollision = 0;
 //------- Game config
 let JUMP_TIME = 300; // in ms
 let HURT_TIME = 700;

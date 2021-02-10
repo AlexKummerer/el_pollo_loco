@@ -6,20 +6,60 @@ function init() {
 }
 
 function loadGame() {
-    createCharacter();
+    runGame();
+}
+
+function runGame() {
     createGallinitasList();
     createPollintosList();
-    checkForRunning();
-    checkForJumping();
-    checkForGallinitas();
-    checkForPollintos();
+    calculateDrawingDetails();
+    if (!gameFinished) {
+        listenForKeys();
+        checkForCollision();
+        checkForGallinitas();
+        checkForPollintos();
+
+        //moveOnMobile();
+    }
+}
+
+function calculateDrawingDetails() {
+    checkCharacterMovement();
     calculateCloudOffSet();
-    listenForKeys();
     calculateGallinitaPosition();
     calculatePollitoPostion();
     calculateBossPosition();
-    checkForCollision();
+    changeBossAnimations();
+
+}
+
+function checkCharacterMovement() {
+    let updateCharacterInterval = setInterval(() => {
+        timePassedSinceJump = new Date().getTime() - lastJumpStarted;
+        //checkIfSleeping();
+        animateCharacter();
+        characterGraphicIndex++;
+    }, 125);
+    updateIntervals.push(updateCharacterInterval);
+}
+
+function animateCharacter() {
+    isJumping = (timePassedSinceJump < JUMP_TIME * 2) && !isHurt;
+    createCharacter();
+    checkForRunning();
+    checkForJumping();
     checkIfHurt();
+    animateDeadCharacter();
+
+}
+
+function animateDeadCharacter() {
+    if (isDead) {
+        let timePassed = new Date().getTime() - characterDefeatedAt;
+        character_x -= timePassed / 18;
+        let index = characterGraphicIndex % deadCharacter.length;
+        currentCharacterImg = characterGraphicsDead[index];
+    }
 }
 
 function calculateBossPosition() {
@@ -34,12 +74,13 @@ function adaptBossMovements() {
     if (finalBoss_energy == 100) {
         // if boss enery is intact, he is moving around his initial spot
         calculatePatrollingBoss();
-    } else if (finalBoss_energy < 100) { // if boss_energy is reduced, he will attack
+    } else if (finalBoss_energy < 100) {
+        // if boss_energy is reduced, he will attack
         BOSS_POSITION_X -= 15;
-    } else if (finalBoss_energy < 60) { // if boss_energy is reduced, he will attack
+    } else if (finalBoss_energy < 60) {
+        // if boss_energy is reduced, he will attack
         BOSS_POSITION_X -= 20;
     }
-
 }
 
 function calculatePatrollingBoss() {
@@ -56,40 +97,59 @@ function bossPatrollingForward() {
     }
 }
 
-
 function bossPatrollingBackward() {
     if (BOSS_POSITION_X <= 4300 && bossTurning) {
         BOSS_POSITION_X += 10;
     }
-    if (BOSS_POSITION_X >= (4300)) {
+    if (BOSS_POSITION_X >= 4300) {
         bossTurning = false;
     }
 }
 
 function checkForCollision() {
     let updateCollisionInterval = setInterval(() => {
-        checkPollitosCollison();
-        checkGallinitasCollison();
         checkBottleCollison();
         checkBossBottleCollison();
-        checkBossCollision()
-
-    }, 125);
+        checkBossCollision();
+    }, 100);
+    checkGallinitasCollison();
+    checkPollitosCollison();
     updateIntervals.push(updateCollisionInterval); // push interval-variable to array to enable clearing of interval if game ends
+
 
 }
 
 function checkBossCollision() {
-    if (checkCollisionCondition(character_x, characterWidth - 60, BOSS_POSITION_X + bg_elements, BOSS_WIDTH - 100, character_y, characterHeight, BOSS_POSITION_Y, BOSS_HEIGHT)) {
+    if (
+        checkCollisionCondition(
+            character_x,
+            characterWidth - 60,
+            BOSS_POSITION_X + bg_elements,
+            BOSS_WIDTH,
+            character_y,
+            characterHeight,
+            BOSS_POSITION_Y,
+            BOSS_HEIGHT
+        )
+    ) {
+        //console.log("character_x", character_x)
+        //console.log("characterWidth", characterWidth - 60)
+        //console.log("BOSS_POSITION_X", BOSS_POSITION_X + bg_elements)
+        //console.log("BOSS_WIDTH", BOSS_WIDTH)
+        //console.log("character_y", character_y)
+        //console.log("characterHeight", characterHeight)
+        //console.log("BOSS_POSITION_Y", BOSS_POSITION_Y)
+        //console.log("BOSS_HEIGHT", BOSS_HEIGHT)
+
+
         reduceCharacterEnergy();
         bossAttack = true;
     }
 }
 
-function reduceCharacterEnergy() {
-    character_energy -= COLLISION_ENERGY_LOSS; // reduce energy when hit by enemy
+function reduceCharacterEnergy() { // reduce energy when hit by enemy
     if (bossAttack) {
-        character_energy == 0; // immediate death when character collides with boss
+        character_energy = 0; // immediate death when character collides with boss
     }
     if (character_energy <= 0) {
         gameOver();
@@ -99,53 +159,73 @@ function reduceCharacterEnergy() {
 function gameOver() {
     isDead = true;
     characterDefeatedAt = new Date().getTime();
+    game_finished = true;
+    character_lost_at = new Date().getTime();
     setTimeout(refreshIntervals, 3000);
-
 }
 
+
+
+
 function checkPollitosCollison() {
-    for (let i = 0; i < pollitos.length; i++) {
-        const pollito = pollitos[i];
-        const pollito_x = pollito.position_x + bg_elements;
-        if (pollito_x - 40 < character_x && pollito_x + 40 > character_x) {
-            if (character_y > 110) {
-                if (character_energy >= 0) {
-                    character_energy -= 2;
-                    isHurt = true;
-                } else {
-                    character_lost_at = new Date().getTime();
-                    game_finished = true;
+    setInterval(() => {
+
+
+
+
+        for (let i = 0; i < pollitos.length; i++) {
+            const pollito = pollitos[i];
+            const pollito_x = pollito.position_x + bg_elements;
+            if (pollito_x - 40 < character_x && pollito_x + 40 > character_x) {
+                if (character_y > 110) {
+                    if (character_energy >= 0) {
+                        character_energy -= 2;
+                        isHurt = true;
+                    } else {
+                        character_lost_at = new Date().getTime();
+                        game_finished = true;
+                    }
                 }
+
             }
+
+            console.log("isHURT", isHurt)
         }
-    }
+    }, 100);
 }
 
 function checkGallinitasCollison() {
-    for (let i = 0; i < gallinitas.length; i++) {
-        const gallinita = gallinitas[i];
-        const gallinita_x = gallinita.position_x + bg_elements;
-        if (gallinita_x - 40 < character_x && gallinita_x + 40 > character_x) {
-            if (character_y > 110) {
-                if (character_energy >= 0) {
-                    character_energy -= 2;
-                    isHurt = true;
-                } else {
-                    character_lost_at = new Date().getTime();
-                    game_finished = true;
+    setInterval(() => {
+
+
+        for (let i = 0; i < gallinitas.length; i++) {
+            const gallinita = gallinitas[i];
+            const gallinita_x = gallinita.position_x + bg_elements;
+            if (gallinita_x - 40 < character_x && gallinita_x + 40 > character_x) {
+                if (character_y > 110) {
+                    if (character_energy >= 0) {
+                        character_energy -= 2;
+                        isHurt = true;
+                    } else {
+                        character_lost_at = new Date().getTime();
+                        game_finished = true;
+                    }
                 }
+
             }
+
+            console.log("isHURT", isHurt)
         }
-    }
+    }, 100);
 }
+
 
 
 function checkBottleCollison() {
     for (let i = 0; i < placedBottles.length; i++) {
         const bottle_X = placedBottles[i] + bg_elements;
         if (bottle_X - 40 < character_x && bottle_X + 40 > character_x) {
-            console.log("bottle_x", bottle_X);
-            console.log("character_y", character_y);
+
             if (character_y > 110) {
                 placedBottles.splice(i, 1);
                 //AUDIO_BOTTLE.play();
@@ -157,14 +237,23 @@ function checkBottleCollison() {
 
 function checkBossBottleCollison() {
     timeSinceLastBottleCollision = new Date().getTime() - timeOfBottleCollision;
-    if (timeSinceLastBottleCollision > DURATION_WOUNDED_STATE) { // boss is immune if still in wounded state
+    if (timeSinceLastBottleCollision > DURATION_WOUNDED_STATE) {
+        // boss is immune if still in wounded state
         bossIsWounded = false;
     }
-    let collisionTrue = checkCollisionCondition(thrownBottleX, 80, BOSS_POSITION_X + bg_elements, BOSS_WIDTH, thrownBottleY, 65, BOSS_POSITION_Y, BOSS_HEIGHT);
+    let collisionTrue = checkCollisionCondition(
+        thrownBottleX,
+        80,
+        BOSS_POSITION_X + bg_elements,
+        BOSS_WIDTH,
+        thrownBottleY,
+        65,
+        BOSS_POSITION_Y,
+        BOSS_HEIGHT
+    );
     if (collisionTrue && !bossIsWounded) {
         hurtBossAnimation();
     }
-
 }
 
 function hurtBossAnimation() {
@@ -181,38 +270,47 @@ function reduceBossEnergy() {
     if (finalBoss_energy <= 0 && bossDefeatedAt == 0) {
         bossDefeatedAt = new Date().getTime();
         bossIsDead = true;
-        console.log("bossIsDead", bossIsDead)
-        console.log("bossDefeatedAt", bossDefeatedAt)
+
         finishLevel();
     }
 }
 
-
-
 /**
  * General function to check if collision has happened between two elements according to x- & y-coordinates
- * 
+ *
  * @param {number} collider_1_x - x-coordinate of the 1st collision element
- * @param {number} collider_1_width - width of the 1st collision element 
+ * @param {number} collider_1_width - width of the 1st collision element
  * @param {number} collider_2_x - x-coordinate of the 2nd collision element
- * @param {number} collider_2_width - width of the 2nd collision element 
+ * @param {number} collider_2_width - width of the 2nd collision element
  * @param {number} collider_1_y - Y-coordinate of the 1st collision element
- * @param {number} collider_1_height - height of the 1st collision element 
+ * @param {number} collider_1_height - height of the 1st collision element
  * @param {number} collider_2_y y-coordinate of the 2nd collision element
- * @param {number} collider_2_height - height of the 2nd collision element 
+ * @param {number} collider_2_height - height of the 2nd collision element
  */
-function checkCollisionCondition(collider_1_x, collider_1_width, collider_2_x, collider_2_width, collider_1_y, collider_1_height, collider_2_y, collider_2_height) {
+function checkCollisionCondition(
+    collider_1_x,
+    collider_1_width,
+    collider_2_x,
+    collider_2_width,
+    collider_1_y,
+    collider_1_height,
+    collider_2_y,
+    collider_2_height
+) {
     // defines range for x-position in which collision is detected
-    let x_condition = ((collider_1_x - collider_1_width / 2) < (collider_2_x + collider_2_width / 2) && (collider_1_x + collider_1_width / 2) > (collider_2_x - collider_2_width / 2));
+    let x_condition =
+        ((collider_1_x - collider_1_width / 2) < (collider_2_x + collider_2_width / 2) && (
+            collider_1_x + collider_1_width / 2) > (collider_2_x - collider_2_width / 2));
     // defines range for y-position in which collision is detected
-    let y_condition = ((collider_1_y + collider_1_height) > collider_2_y) && (collider_1_y < (collider_2_y + collider_2_height));
-    return (x_condition && y_condition);
+    let y_condition =
+        ((collider_1_y + collider_1_height) > (collider_2_y &&
+            collider_1_y) < (collider_2_y + collider_2_height));
+    return x_condition && y_condition;
 }
-
-
 
 function finishLevel() {
     game_finished = true;
+
     gameStarted = false;
     refreshIntervals();
 }
@@ -280,15 +378,14 @@ function draw() {
 function drawBossEnergyBar() {
     let energyBarPathBoss = "img/bossenergy/" + finalBoss_energy + "_.png";
     if (finalBoss_energy <= 0) {
-        energyBarPathBoss = 'img/bossenergy/0_.png';
+        energyBarPathBoss = "img/bossenergy/0_.png";
     }
     addBackgroundObject(energyBarPathBoss, BOSS_POSITION_X + 50, 80, 0.35, 1);
 }
 
-
 function drawFinalBoss2() {
     let src = currentBossImage;
-    changeBossAnimations();
+
     addBackgroundObject(src, BOSS_POSITION_X, BOSS_POSITION_Y, 0.25, 1);
 }
 
@@ -312,7 +409,6 @@ function animateAttackingBoss(index) {
         index = currentBossIndex % bossGraphicsAttacking.length;
         currentBossImage = bossGraphicsAttacking[index];
     }
-
 }
 
 function animateWoundedBoss(index) {
@@ -320,8 +416,6 @@ function animateWoundedBoss(index) {
         index = currentBossIndex % bossWoundedGraphics.length;
         currentBossImage = bossWoundedGraphics[index];
     }
-
-
 }
 
 function animateBossDefeat(index) {
@@ -331,13 +425,9 @@ function animateBossDefeat(index) {
         BOSS_POSITION_Y -= timePassed / 14;
         index = currentBossIndex % bossGraphicsDead.length;
         currentBossImage = bossGraphicsDead[index];
-        console.log("timePassed", timePassed)
-        console.log("BOSS_POSITION_X", BOSS_POSITION_X)
-        console.log("BOSS_POSITION_Y", BOSS_POSITION_Y)
 
     }
 }
-
 
 function drawThrowBottle() {
     if (bottleThrowTime) {
@@ -403,10 +493,11 @@ function drawPollitos() {
         const pollito = pollitos[index];
         let base_image = currentPollito;
 
+
         addBackgroundObject(
             base_image,
             pollito.position_x,
-            pollito.position_y,
+            pollito.position_y + 8,
             pollito.scale,
             1
         );
@@ -452,9 +543,9 @@ function drawFinalScreen() {
 function createChicken(position_x) {
     return {
         position_x: position_x,
-        position_y: 280,
+        position_y: 286,
         scale: 0.26,
-        speed: Math.random() * 6,
+        speed: (Math.random() * 6) + 1,
         opacity: 1,
     };
 }
@@ -479,107 +570,93 @@ function checkForPollintos() {
 }
 
 function createCharacter() {
-    setInterval(() => {
-        if (directionRight && !isMovingRight && !isMovingLeft && !isJumping) {
-            let index = characterGraphicIndex % characterStandRight.length; //
-            currentCharacterImg = characterStandRight[index];
-            characterGraphicIndex = characterGraphicIndex + 1;
-        }
-        if (directionLeft && !isMovingRight && !isMovingLeft && !isJumping) {
-            let index = characterGraphicIndex % characterStandLeft.length; //
-            currentCharacterImg = characterStandLeft[index];
-            characterGraphicIndex = characterGraphicIndex + 1;
-        }
-    }, 125);
+    if (directionRight && !isMovingRight && !isMovingLeft && !isJumping) {
+        let index = characterGraphicIndex % characterStandRight.length; //
+        currentCharacterImg = characterStandRight[index];
+
+    }
+    if (directionLeft && !isMovingRight && !isMovingLeft && !isJumping) {
+        let index = characterGraphicIndex % characterStandLeft.length; //
+        currentCharacterImg = characterStandLeft[index];
+
+    }
 }
 
 function checkIfHurt() {
     let index;
-
-    setInterval(function() {
+    setInterval(() => {
         if (isHurt && directionRight) {
             if (index == 2) {
                 isHurt = false;
                 index = 0;
-                characterHurtGraphicIndex = 0;
+                characterGraphicIndex = 0;
             }
-            index = characterHurtGraphicIndex % characterHurtRight.length;
+
+            index = characterGraphicIndex % characterHurtRight.length;
             currentCharacterImg = characterHurtRight[index];
-            characterHurtGraphicIndex = characterHurtGraphicIndex + 1;
+
         }
 
         if (isHurt && directionLeft) {
             if (index == 2) {
                 isHurt = false;
                 index = 0;
-                characterHurtGraphicIndex = 0;
+                characterGraphicIndex = 0;
             }
-            index = characterHurtGraphicIndex % characterHurtLeft.length;
+            index = characterGraphicIndex % characterHurtLeft.length;
             currentCharacterImg = characterHurtLeft[index];
-            characterHurtGraphicIndex = characterHurtGraphicIndex + 1;
         }
     }, 80);
 }
 
 function checkForJumping() {
     let index;
-    setInterval(() => {
-        if (isJumping && directionRight) {
-            if (index == 8) {
-                isJumping = false;
-                index = 0;
-                characterJumpIndex = 0;
-            }
-            index = characterJumpIndex % characterJumpRight.length;
-            currentCharacterImg = characterJumpRight[index];
-            characterJumpIndex = characterJumpIndex + 1;
-        }
 
-        if (isJumping && directionLeft) {
-            if (index == 8) {
-                isJumping = false;
-                index = 0;
-                characterJumpIndex = 0;
-            }
-            index = characterJumpIndex % characterJumpLeft.length;
-            currentCharacterImg = characterJumpLeft[index];
-            characterJumpIndex = characterJumpIndex + 1;
-        }
-    }, 80);
+    if (isJumping && directionRight) {
+
+        index = characterJumpIndex % characterJumpRight.length;
+        currentCharacterImg = characterJumpRight[index];
+        characterJumpIndex = characterJumpIndex + 1;
+    }
+
+    if (isJumping && directionLeft) {
+        index = characterJumpIndex % characterJumpLeft.length;
+        currentCharacterImg = characterJumpLeft[index];
+        characterJumpIndex = characterJumpIndex + 1;
+    }
 }
 
 function checkForRunning() {
-    setInterval(() => {
-        if (isMovingRight) {
-            directionRight = true;
-            directionLeft = false;
-            //AUDIO_RUNNING.play();
-            let index = characterGraphicIndex % characterGraphicsRight.length; //
-            currentCharacterImg = characterGraphicsRight[index];
-            characterGraphicIndex = characterGraphicIndex + 1;
-        }
+    if (isMovingRight) {
+        directionRight = true;
+        directionLeft = false;
+        //AUDIO_RUNNING.play();
+        let index = characterGraphicIndex % characterGraphicsRight.length; //
+        currentCharacterImg = characterGraphicsRight[index];
 
-        // is Moving Left
+    }
 
-        if (isMovingLeft) {
-            directionRight = false;
-            directionLeft = true;
-            // AUDIO_RUNNING.play();
-            let index = characterGraphicIndex % characterGraphicsLeft.length;
-            currentCharacterImg = characterGraphicsLeft[index];
-            characterGraphicIndex = characterGraphicIndex + 1;
-        }
+    // is Moving Left
 
-        if (!isMovingLeft && !isMovingRight) {
-            //AUDIO_RUNNING.pause();
-        }
-    }, 125);
-    console.log("character_x", character_x);
+    if (isMovingLeft) {
+        directionRight = false;
+        directionLeft = true;
+        // AUDIO_RUNNING.play();
+        let index = characterGraphicIndex % characterGraphicsLeft.length;
+        currentCharacterImg = characterGraphicsLeft[index];
+    }
+
+    if (!isMovingLeft && !isMovingRight) {
+        //AUDIO_RUNNING.pause();
+    }
+
 }
 
 function updateCharacter() {
     let base_image = new Image();
     base_image.src = currentCharacterImg;
+    characterHeight = base_image.width * 0.2;
+    characterWidth = base_image.height * 0.2;
 
     let timePassedSinceJump = new Date().getTime() - lastJumpStarted;
     if (timePassedSinceJump < JUMP_TIME) {
@@ -596,8 +673,8 @@ function updateCharacter() {
             base_image,
             character_x,
             character_y,
-            base_image.width * 0.2,
-            base_image.height * 0.2
+            characterHeight,
+            characterWidth
         );
     }
 }
@@ -671,6 +748,7 @@ function addBackgroundObject(src, offsetX, offsetY, scale, opacity) {
 function listenForKeys() {
     document.addEventListener("keydown", (e) => {
         const k = e.key;
+
         if (k == "ArrowRight") {
             isMovingRight = true;
         }
@@ -678,6 +756,7 @@ function listenForKeys() {
         if (k == "ArrowLeft") {
             isMovingLeft = true;
         }
+
 
         if (k == "d" && collectedBottles > 0) {
             let timePassed = new Date().getTime() - bottleThrowTime;
@@ -689,7 +768,7 @@ function listenForKeys() {
         }
 
         let timePassedSinceJump = new Date().getTime() - lastJumpStarted;
-        if (e.code == "Space" && timePassedSinceJump > JUMP_TIME * 2) {
+        if (e.code == "Space" && timePassedSinceJump > JUMP_TIME * 2 && !isHurt) {
             //AUDIO_JUMP.play();
             isJumping = true;
             lastJumpStarted = new Date().getTime();
@@ -707,9 +786,11 @@ function listenForKeys() {
     });
 }
 
+
+
 function refreshIntervals() {
     updateIntervals.forEach((interval) => {
-        clearInterval(interval)
+        clearInterval(interval);
     });
     updateIntervals = [];
 }
