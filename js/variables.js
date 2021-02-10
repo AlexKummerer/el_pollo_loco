@@ -98,6 +98,7 @@ let allGallinitas = [
     "img/chicken2.png",
     "img/chicken3.png",
 ];
+let lostenergy = 2
 let gallinitasIndex = 0;
 let gallinitas = [];
 let currentPollito = "img/pollito1.png";
@@ -127,7 +128,7 @@ let bossGraphicsAttacking = ["img/bossattack1.png", "img/bossattack2.png", "img/
 let bossWoundedGraphics = ["img/bosswounded1.png", "img/bosswounded2.png", "img/bosswounded3.png"]
 let bossGraphicsDead = ["img/bossdead1.png", "img/bossdead2.png", "img/bossdead3.png"];
 let bossEnergy = ["img/bossenergy/0_.png", "img/bossenergy/20_.png", "img/bossenergy/40_.png", "img/bossenergy/60_.png", "img/bossenergy/80_.png", "img/bossenergy/100_.png"]
-
+let characterGraphicsDead = ["img/dead1.png", "img/dead2.png", "img/dead3.png", "img/dead4.png", "img/dead5.png", "img/dead6.png", "img/dead7.png"]
 let bossTurning = false;
 let bossIsWounded = false;
 let updateIntervals = [];
