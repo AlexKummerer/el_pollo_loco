@@ -17,15 +17,20 @@
 
 </head>
 
-<body onload="init(), loadGame()">
+<body onload="init()">
 
     <h1>El Pollo Loco</h1>
 
     <div class="canvas-container">
-
+        <span id="loco" class="title">EL Pollo Loco</span>
+        <button id="start-button" class="button-position" onclick="startGame()">Start</button>
+        <button id="restart-button" class="button-position d-none" onclick="window.location.reload()">Restart</button>
         <canvas id="canvas" width="820" height="425"> </canvas>
 
     </div>
+
+
+    <h4 class="description">Run: Arrow right/left | Jump: space-bar | Throw Tasbasco: d | Music on/off: m </h4>
 </body>
 
 </html>
