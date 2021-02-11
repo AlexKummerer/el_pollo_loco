@@ -34,25 +34,25 @@ function drawbackground() {
 }
 
 function drawSky() {
-    for (let i = -1; i < 4; i++) {
+    for (let i = -1; i < 3; i++) {
         addBackgroundObject("img/sky.png", i * 1900, 0, 1, 1);
     }
 }
 
 function drawHills() {
-    for (let i = -1; i < 3; i++) {
+    for (let i = -1; i < 2; i++) {
         addBackgroundObject("img/bg_2.png", i * 2300, -220, 0.6);
     }
 }
 
 function drawShadows() {
-    for (let i = -1; i < 4; i++) {
+    for (let i = -1; i < 2; i++) {
         addBackgroundObject("img/bg_1.png", i * 2304, -200, 0.6);
     }
 }
 
 function drawClouds() {
-    for (let i = -1; i < 5; i++) {
+    for (let i = -1; i < 3; i++) {
         addBackgroundObject("img/clouds.png", i * 1920 - cloudOffSet, -40, 0.4, 1);
     }
 }

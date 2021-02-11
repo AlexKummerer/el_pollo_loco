@@ -5,10 +5,15 @@ function init() {
     draw();
 }
 
-function loadGame() {
+function startGame() {
     gameStarted = true;
+    document.getElementById('start-button').classList.add('d-none');
+    document.getElementById('loco').classList.add('d-none');
+
+
     runGame();
 }
+
 
 function runGame() {
     calculateDrawingDetails();
@@ -27,9 +32,10 @@ function checkForCollision() {
         checkBottleCollison();
         checkBossBottleCollison();
         checkBossCollision();
+        checkGallinitasCollison();
+        checkPollitosCollison();
     }, 125);
-    checkGallinitasCollison();
-    checkPollitosCollison();
+
 }
 
 function checkBossCollision() {
@@ -51,8 +57,13 @@ function checkBossCollision() {
 }
 
 function reduceCharacterEnergy() {
+
     // reduce energy when hit by enemy
+
+
     character_energy -= lostenergy;
+
+
     if (bossAttack) {
         character_energy = 0; // immediate death when character collides with boss
     }
@@ -70,37 +81,38 @@ function gameOver() {
 }
 
 function checkPollitosCollison() {
-    setInterval(() => {
-        for (let i = 0; i < pollitos.length; i++) {
-            const pollito = pollitos[i];
-            const pollito_x = pollito.position_x + bg_elements;
-            if (pollito_x - 40 < character_x && pollito_x + 40 > character_x) {
-                if (character_y > 110) {
-                    if (character_energy >= 0) {
-                        reduceCharacterEnergy();
-                        isHurt = true;
-                    }
+
+    for (let i = 0; i < pollitos.length; i++) {
+        const pollito = pollitos[i];
+        const pollito_x = pollito.position_x + bg_elements;
+        if (pollito_x - 40 < character_x && pollito_x + 40 > character_x) {
+            if (character_y > 110) {
+                if (character_energy >= 0) {
+                    reduceCharacterEnergy();
+                    isHurt = true;
                 }
             }
         }
-    }, 125);
+    }
+
 }
 
 function checkGallinitasCollison() {
-    setInterval(() => {
-        for (let i = 0; i < gallinitas.length; i++) {
-            const gallinita = gallinitas[i];
-            const gallinita_x = gallinita.position_x + bg_elements;
-            if (gallinita_x - 40 < character_x && gallinita_x + 40 > character_x) {
-                if (character_y > 110) {
-                    if (character_energy >= 0) {
-                        reduceCharacterEnergy();
-                        isHurt = true;
-                    }
+
+    for (let i = 0; i < gallinitas.length; i++) {
+        const gallinita = gallinitas[i];
+        const gallinita_x = gallinita.position_x + bg_elements;
+        if (gallinita_x - 40 < character_x && gallinita_x + 40 > character_x) {
+            if (character_y > 110) {
+                if (character_energy >= 0) {
+                    reduceCharacterEnergy();
+                    isHurt = true;
+                    console.log(character_energy)
                 }
             }
         }
-    }, 125);
+    }
+
 }
 
 function checkBottleCollison() {
@@ -291,15 +303,15 @@ function listenForKeys() {
 function removeKeyListener() {
     document.removeEventListener("keydown", (e) => {
         const k = e.key;
-        if (k == "ArrowRight") {
+        if (k == "ArrowRight" && gameStarted) {
             isMovingRight = false;
         }
 
-        if (k == "ArrowLeft") {
+        if (k == "ArrowLeft" && gameStarted) {
             isMovingLeft = false;
         }
 
-        if (k == "d" && collectedBottles > 0) {
+        if (k == "d" && collectedBottles > 0 && !directionLeft) {
             let timePassed = new Date().getTime() - bottleThrowTime;
             console.log(timePassed);
             if (timePassed > 1000) {
@@ -311,7 +323,7 @@ function removeKeyListener() {
         }
 
         let timePassedSinceJump = new Date().getTime() - lastJumpStarted;
-        if (e.code == "Space" && timePassedSinceJump > JUMP_TIME * 2 && !isHurt) {
+        if (e.code == "Space" && timePassedSinceJump > JUMP_TIME * 2 && !isHurt && gameStarted) {
             //AUDIO_JUMP.play();
             isJumping = false;
             lastJumpStarted = new Date().getTime();
@@ -319,11 +331,11 @@ function removeKeyListener() {
     });
     document.removeEventListener("keyup", (e) => {
         const k = e.key;
-        if (k == "ArrowRight") {
+        if (k == "ArrowRight" && !gameStarted) {
             isMovingRight = false;
         }
 
-        if (k == "ArrowLeft") {
+        if (k == "ArrowLeft" && !gameStarted) {
             isMovingLeft = false;
         }
     });

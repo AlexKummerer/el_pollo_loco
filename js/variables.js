@@ -1,6 +1,6 @@
 let canvas;
 let ctx;
-let character_x = 200;
+let character_x = 100;
 let character_y = 115;
 let character_energy = 20;
 let finalBoss_energy = 100;
@@ -98,7 +98,7 @@ let allGallinitas = [
     "img/chicken2.png",
     "img/chicken3.png",
 ];
-let lostenergy = 2
+let lostenergy = 2;
 let gallinitasIndex = 0;
 let gallinitas = [];
 let currentPollito = "img/pollito1.png";

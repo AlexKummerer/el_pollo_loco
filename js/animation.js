@@ -223,13 +223,13 @@ function animateBossDefeat(index) {
 }
 
 function drawFinalScreen() {
-
+    document.getElementById('restart-button').classList.remove('d-none');
+    stopMoving();
     if (gameFinished && !isDead) {
         drawWinScreen();
 
     } else if (isDead) {
         drawDefeatScreen();
-        removeKeyListener();
     }
 }
 
@@ -254,4 +254,11 @@ function prepareNotification() {
     ctx.font = '90px Architects Daughter';
     ctx.fillStyle = 'blue';
     ctx.textAlign = 'center';
+}
+
+function stopMoving() {
+    isMovingLeft = false;
+    isMovingRight = false;
+    GAME_SPEED = 0;
+
 }
