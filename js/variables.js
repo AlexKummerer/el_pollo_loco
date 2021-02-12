@@ -150,7 +150,8 @@ let characterHeight;
 let characterWidth;
 let isWounded = false;
 let timeOfCollision = 0;
-//------- Game config
+let soundIsOn = true
+    //------- Game config
 let JUMP_TIME = 300; // in ms
 let HURT_TIME = 700;
 let DEAD_TIME = 500;

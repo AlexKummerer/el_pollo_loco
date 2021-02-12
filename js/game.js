@@ -397,3 +397,49 @@ function stopjump() {
         lastKeyPressed = 0;
     }
 }
+
+function turnSoundandMusicOff() {
+
+    document.addEventListener("keydown", e => {
+
+        if (e.key == 'm' && soundIsOn) {
+            AUDIO_RUNNING.muted = true;
+            AUDIO_JUMP.muted = true;
+            AUDIO_BOTTLE.muted = true;
+            AUDIO_THROW.muted = true;
+            AUDIO_GLASS.muted = true;
+            AUDIO_CHICKEN.muted = true;
+            AUDIO_CRACK.muted = true;
+            AUDIO_HURT.muted = true;
+            AUDIO_WIN.muted = true;
+            AUDIO_LOOSE.muted = true;
+            AUDIO_COCKSCREAM.muted = true;
+            AUDIO_BACKGROUND_MUSIC.muted = true;
+
+            setTimeout(function() {
+                soundIsOn = false;
+                soundIsOff = true;
+            }, 100);
+        }
+
+        if (e.key == 'm' && soundIsOff) {
+            AUDIO_RUNNING.muted = false;
+            AUDIO_JUMP.muted = false;
+            AUDIO_BOTTLE.muted = false;
+            AUDIO_THROW.muted = false;
+            AUDIO_GLASS.muted = false;
+            AUDIO_CHICKEN.muted = false;
+            AUDIO_CRACK.muted = false;
+            AUDIO_HURT.muted = false;
+            AUDIO_WIN.muted = false;
+            AUDIO_LOOSE.muted = false;
+            AUDIO_COCKSCREAM.muted = false;
+            AUDIO_BACKGROUND_MUSIC.muted = false;
+            setTimeout(function() {
+                soundIsOn = true;
+                soundIsOff = false;
+            }, 100);
+        }
+
+    });
+}
