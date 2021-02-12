@@ -127,7 +127,6 @@ function checkBossBottleCollison() {
     if (timeSinceLastBottleCollision > DURATION_WOUNDED_STATE) {
         // boss is immune if still in wounded state
         bossIsWounded = false;
-
     }
     let collisionTrue = checkCollisionCondition(
         thrownBottleX,
@@ -239,7 +238,7 @@ function createChicken(position_x) {
         position_x: position_x,
         position_y: 286,
         scale: 0.26,
-        speed: (Math.random() * 6) + 4,
+        speed: Math.random() * 6 + 4,
         opacity: 1,
     };
 }
@@ -281,57 +280,39 @@ function addBackgroundObject(src, offsetX, offsetY, scale, opacity) {
 }
 
 function listenForKeys() {
+    startupMobileListeners();
     document.addEventListener("keydown", (e) => {
         const k = e.key;
 
         if (k == "ArrowRight") {
             moveright();
-
         }
 
         if (k == "ArrowLeft") {
             moveleft();
-
         }
 
         if (k == "d" && collectedBottles > 0 && !directionLeft) {
             throwbottle();
-
         }
-
-
 
         if (e.code == "Space") {
-
             jump();
-
         }
     });
-
-
-
-
-
-
-
-
-
-
     document.addEventListener("keyup", (e) => {
         const k = e.key;
         if (k == "ArrowRight") {
             stopmoveright();
-
         }
 
         if (k == "ArrowLeft") {
             stopmoveleft();
-
         }
-        if (e.code == 'Space' && !isDead) {
+        if (e.code == "Space" && !isDead) {
             stopjump();
         }
-        if (k == 'd') {
+        if (k == "d") {
             stopthrowbottle();
         }
     });
@@ -347,12 +328,9 @@ function stopmoveright() {
     lastKeyPressed = new Date().getTime();
 }
 
-
-
 function moveleft() {
     isMovingLeft = true;
-    lastKeyPressed = 0
-
+    lastKeyPressed = 0;
 }
 
 function stopmoveleft() {
@@ -399,10 +377,8 @@ function stopjump() {
 }
 
 function turnSoundandMusicOff() {
-
-    document.addEventListener("keydown", e => {
-
-        if (e.key == 'm' && soundIsOn) {
+    document.addEventListener("keydown", (e) => {
+        if (e.key == "m" && soundIsOn) {
             AUDIO_RUNNING.muted = true;
             AUDIO_JUMP.muted = true;
             AUDIO_BOTTLE.muted = true;
@@ -422,7 +398,7 @@ function turnSoundandMusicOff() {
             }, 100);
         }
 
-        if (e.key == 'm' && soundIsOff) {
+        if (e.key == "m" && soundIsOff) {
             AUDIO_RUNNING.muted = false;
             AUDIO_JUMP.muted = false;
             AUDIO_BOTTLE.muted = false;
@@ -440,6 +416,5 @@ function turnSoundandMusicOff() {
                 soundIsOff = false;
             }, 100);
         }
-
     });
 }

@@ -151,7 +151,14 @@ let characterWidth;
 let isWounded = false;
 let timeOfCollision = 0;
 let soundIsOn = true
-    //------- Game config
+
+// touch_processing.js variables
+let touchpointX;
+let Y_touchpoints = new Array();
+let ongoingTouches = new Array();
+let jumpOnMobile = false;
+let clickTimer = null;
+//------- Game config
 let JUMP_TIME = 300; // in ms
 let HURT_TIME = 700;
 let DEAD_TIME = 500;

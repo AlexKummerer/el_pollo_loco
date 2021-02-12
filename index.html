@@ -11,6 +11,7 @@
     <script src="js/game.js"></script>
     <script src="js/draw.js"></script>
     <script src="js/animation.js"></script>
+    <script src="js/touch_processing.js"></script>
 
 
 
@@ -18,18 +19,25 @@
 </head>
 
 <body onload="init(); turnSoundandMusicOff()">
+    <div id='wrapper' class="wrapper">
+        <div class="heading-box">
+            <h1>El Pollo Loco</h1>
 
-    <h1>El Pollo Loco</h1>
+        </div>
+        <img src="/mobile_instructions.png" class="mobile-instructions" id="mobile-instructions">
 
-    <div class="canvas-container">
-        <span id="loco" class="title">EL Pollo Loco</span>
-        <button id="start-button" class="button-position" onclick="startGame()">Start</button>
-        <button id="restart-button" class="button-position d-none" onclick="window.location.reload()">Restart</button>
-        <canvas id="canvas" width="820" height="425"> </canvas>
+
+        <div class="canvas-container">
+            <span id="loco" class="title">EL Pollo Loco</span>
+            <button id="start-button" class="button-position" onclick="startGame()">Start</button>
+            <button id="restart-button" class="button-position d-none" onclick="window.location.reload()">Restart</button>
+            <canvas id="canvas" width="820" height="425"> </canvas>
+
+        </div>
+
+
 
     </div>
-
-
     <h4 class="description">Run: Arrow right/left | Jump: space-bar | Throw Tasbasco: d | Music on/off: m </h4>
 </body>
 
