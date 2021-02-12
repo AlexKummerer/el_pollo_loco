@@ -10,7 +10,6 @@ function calculateDrawingDetails() {
 function checkCharacterMovement() {
     setInterval(() => {
         timePassedSinceJump = new Date().getTime() - lastJumpStarted;
-        //checkIfSleeping();
         animateCharacter();
         characterGraphicIndex++;
     }, 100);
@@ -22,6 +21,7 @@ function animateCharacter() {
     checkForRunning();
     checkForJumping();
     checkIfHurt();
+    checkForSleep();
     animateDeadCharacter();
 }
 
@@ -40,7 +40,7 @@ function checkForRunning() {
     if (isMovingRight) {
         directionRight = true;
         directionLeft = false;
-        //AUDIO_RUNNING.play();
+        AUDIO_RUNNING.play();
         let index = characterGraphicIndex % characterGraphicsRight.length; //
         currentCharacterImg = characterGraphicsRight[index];
     }
@@ -50,13 +50,13 @@ function checkForRunning() {
     if (isMovingLeft) {
         directionRight = false;
         directionLeft = true;
-        // AUDIO_RUNNING.play();
+        AUDIO_RUNNING.play();
         let index = characterGraphicIndex % characterGraphicsLeft.length;
         currentCharacterImg = characterGraphicsLeft[index];
     }
 
     if (!isMovingLeft && !isMovingRight) {
-        //AUDIO_RUNNING.pause();
+        AUDIO_RUNNING.pause();
     }
 }
 
@@ -64,12 +64,22 @@ function checkForJumping() {
     let index;
 
     if (isJumping && directionRight) {
+        if (index == 8) {
+            isJumping = false;
+            index = 0;
+            characterJumpIndex = 0;
+        }
         index = characterJumpIndex % characterJumpRight.length;
         currentCharacterImg = characterJumpRight[index];
         characterJumpIndex = characterJumpIndex + 1;
     }
 
     if (isJumping && directionLeft) {
+        if (index == 8) {
+            isJumping = false;
+            index = 0;
+            characterJumpIndex = 0;
+        }
         index = characterJumpIndex % characterJumpLeft.length;
         currentCharacterImg = characterJumpLeft[index];
         characterJumpIndex = characterJumpIndex + 1;
@@ -102,6 +112,26 @@ function checkIfHurt() {
             characterHurtGraphicIndex++;
         }
     }, 80);
+}
+
+/**
+ * This function checks for the current image if the character is sleeping.
+ */
+function checkForSleep() {
+    let timePassed = new Date().getTime() - lastKeyPressed;
+
+    if (lastKeyPressed != 0 && timePassed > 2000) {
+        isSleeping = true;
+        if (directionRight) {
+            let index = characterGraphicIndex % characterSleepRight.length;
+            currentCharacterImg = characterSleepRight[index];
+        } else if (directionLeft) {
+            let index = characterGraphicIndex % characterSleepLeft.length;
+            currentCharacterImg = characterSleepLeft[index];
+        }
+    } else {
+        isSleeping = false;
+    }
 }
 
 function animateDeadCharacter() {
@@ -223,42 +253,46 @@ function animateBossDefeat(index) {
 }
 
 function drawFinalScreen() {
-    document.getElementById('restart-button').classList.remove('d-none');
+    document.getElementById("restart-button").classList.remove("d-none");
+    AUDIO_BACKGROUND_MUSIC.pause();
+    AUDIO_CHICKEN.pause();
+    calculateDrawingDetails();
     stopMoving();
     if (gameFinished && !isDead) {
+        AUDIO_WIN.play();
         drawWinScreen();
-
     } else if (isDead) {
         drawDefeatScreen();
+        AUDIO_LOOSE.play();
+        AUDIO_JUMP.volume = 0.0;
     }
 }
 
 function drawWinScreen() {
     prepareNotification();
-    ctx.fillText('Congrats!', canvas.width / 2, 200);
-    ctx.fillText(' You won!', canvas.width / 2, 300);
-
+    ctx.fillText("Congrats!", canvas.width / 2, 150);
+    ctx.fillText(" You won!", canvas.width / 2, 250);
 }
 
 function drawDefeatScreen() {
     prepareNotification();
-    ctx.fillText('Oh nooo!', canvas.width / 2, 200);
-    ctx.fillText(' You lost!', canvas.width / 2, 300);
-
+    ctx.fillText("Oh nooo!", canvas.width / 2, 150);
+    ctx.fillText(" You lost!", canvas.width / 2, 250);
 }
 
 /**
  * Prepares styles for screen-notification when game is won / over
  */
 function prepareNotification() {
-    ctx.font = '90px Architects Daughter';
-    ctx.fillStyle = 'blue';
-    ctx.textAlign = 'center';
+    ctx.font = "90px Bradley Hand ITC";
+    ctx.fillStyle = "blue";
+    ctx.textAlign = "center";
 }
 
 function stopMoving() {
     isMovingLeft = false;
     isMovingRight = false;
     GAME_SPEED = 0;
-
+    gallinitas = [];
+    pollitos = [];
 }

@@ -1,7 +1,7 @@
 let imagePaths = ["img/fwd_1.png", "img/fwd_2.png", "img/fwd_3.png", "img/fwd_4.png", "img/fwd_5.png", "img/fwd_6.png", "img/bwd_1.png", "img/bwd_2.png", "img/bwd_3.png", "img/bwd_4.png", "img/bwd_5.png",
     "img/bwd_6.png", "img/chicken1.png", "img/chicken2.png", "img/chicken3.png", "img/pollito1.png", "img/pollito2.png", "img/pollito3.png", "img/bg_2.png", "img/bg_1.png", "img/clouds.png",
     "img/sky.png", "img/bg.png", ...characterStandRight, ...characterStandLeft, ...characterJumpRight, ...characterHurtRight, ...characterJumpLeft, ...characterHurtLeft, "img/vidas.png", "img/vidas.png",
-    ...bossGraphicsWalkingLeft, ...bossEnergy, ...bossGraphicsAttacking, "img/tabasco.png", ...bossWoundedGraphics, ...bossGraphicsDead, ...deadCharacter
+    ...bossGraphicsWalkingLeft, ...bossEnergy, ...bossGraphicsAttacking, "img/tabasco.png", ...bossWoundedGraphics, ...bossGraphicsDead, ...deadCharacter, ...characterSleepRight, ...characterSleepLeft
 ]
 let images = [];
 

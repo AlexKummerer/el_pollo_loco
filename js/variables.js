@@ -8,9 +8,12 @@ let isMovingRight = false;
 let isMovingLeft = false;
 let isJumping = false;
 let isDead = false;
+let isSleeping = false;
 let gameFinished = false;
 let bg_elements = 0;
 let lastJumpStarted = 0;
+let lastKeyPressed = 0;
+
 let currentCharacterImg = "img/standright1.png";
 let characterStandRight = [
     "img/standright1.png",
@@ -23,7 +26,10 @@ let characterStandRight = [
     "img/standright8.png",
     "img/standright9.png",
     "img/standright10.png",
+
 ];
+
+let characterSleepRight = ["img/sleepright1.png", "img/sleepright2.png", "img/sleepright3.png", "img/sleepright4.png", "img/sleepright5.png", "img/sleepright6.png", "img/sleepright7.png", "img/sleepright8.png", "img/sleepright9.png", "img/sleepright10.png"]
 let characterGraphicsRight = [
     "img/fwd_1.png",
     "img/fwd_2.png",
@@ -49,6 +55,11 @@ let characterHurtRight = [
     "img/hurtright2.png",
     "img/hurtright3.png",
 ];
+let characterSleepLeft = ["img/sleepleft1.png", "img/sleepleft2.png", "img/sleepleft3.png", "img/sleepleft4.png", "img/sleepleft5.png", "img/sleepleft6.png", "img/sleepleft7.png", "img/sleepleft8.png", "img/sleepleft9.png", "img/sleepleft10.png"
+
+
+]
+
 
 let characterStandLeft = [
     "img/standleft1.png",
@@ -98,7 +109,7 @@ let allGallinitas = [
     "img/chicken2.png",
     "img/chicken3.png",
 ];
-let lostenergy = 2;
+let lostenergy = 1;
 let gallinitasIndex = 0;
 let gallinitas = [];
 let currentPollito = "img/pollito1.png";
@@ -108,8 +119,8 @@ let pollitos = [];
 let cloudOffSet = 0;
 let directionRight = true;
 let directionLeft = false;
-let placedBottles = [750, 1000, 1500, 1850, 2100, 2400, 2700, 3050, 3400, 3800];
-let collectedBottles = 50;
+let placedBottles = [535, 1000, 1500, 1850, 2500, 3000];
+let collectedBottles = 0;
 let bottleThrowTime = 0;
 let thrownBottleX = 0;
 let thrownBottleY = 0;
@@ -146,15 +157,20 @@ let DEAD_TIME = 500;
 let GAME_SPEED = 7;
 let BOSS_POSITION_X = 4300;
 let BOSS_POSITION_Y = 80;
-let AUDIO_RUNNING = new Audio("audio/running.mp3");
+let AUDIO_RUNNING = new Audio("audio/running.wav");
 let AUDIO_JUMP = new Audio("audio/jump.mp3");
 let AUDIO_BOTTLE = new Audio("audio/bottle.mp3");
 let AUDIO_THROW = new Audio("audio/throw.mp3");
 let AUDIO_GLASS = new Audio("audio/glass.mp3");
 let AUDIO_CHICKEN = new Audio("audio/chicken.mp3");
+let AUDIO_CRACK = new Audio("audio/crack.wav");
+let AUDIO_HURT = new Audio("audio/hurt.wav");
+let AUDIO_WIN = new Audio("audio/win.mp3");
+let AUDIO_LOOSE = new Audio("audio/loose.wav")
+let AUDIO_COCKSCREAM = new Audio("audio/cockScream.wav")
 let AUDIO_BACKGROUND_MUSIC = new Audio("audio/mexican.mp3");
 AUDIO_BACKGROUND_MUSIC.loop = true;
-AUDIO_BACKGROUND_MUSIC.volume = 0.2;
+AUDIO_BACKGROUND_MUSIC.volume = 0.10;
 const DURATION_WOUNDED_STATE = 750;
 const COLLISION_ENERGY_LOSS = 20;
 let BOSS_WIDTH = 350;
