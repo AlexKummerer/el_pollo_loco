@@ -256,7 +256,6 @@ function drawFinalScreen() {
     document.getElementById("restart-button").classList.remove("d-none");
     AUDIO_BACKGROUND_MUSIC.pause();
     AUDIO_CHICKEN.pause();
-    calculateDrawingDetails();
     stopMoving();
     if (gameFinished && !isDead) {
         AUDIO_WIN.play();
@@ -293,6 +292,7 @@ function stopMoving() {
     isMovingLeft = false;
     isMovingRight = false;
     GAME_SPEED = 0;
-    gallinitas = [];
-    pollitos = [];
+    //gallinitas = [];
+    //pollitos = [];
+    //cloudOffSet = 0;
 }
