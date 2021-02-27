@@ -292,7 +292,7 @@ function stopMoving() {
     isMovingLeft = false;
     isMovingRight = false;
     GAME_SPEED = 0;
-    //gallinitas = [];
-    //pollitos = [];
+    gallinitas = [];
+    pollitos = [];
     //cloudOffSet = 0;
 }
