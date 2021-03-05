@@ -1,3 +1,8 @@
+/**
+ * 
+ * Draw all game details
+ * 
+ */
 function draw() {
     drawbackground();
     drawFinalBoss2();
@@ -6,6 +11,12 @@ function draw() {
     requestAnimationFrame(draw);
 }
 
+
+/**
+ * 
+ * animation if gamestarted or gemaFinished
+ * 
+ */
 function animateGameStartNFinish() {
     if (gameFinished || isDead) {
         drawFinalScreen();
@@ -14,6 +25,13 @@ function animateGameStartNFinish() {
     }
 }
 
+
+/**
+ * 
+ * drwa Gallinitas,pollitos, bootles, energybar, bottleinfotmation, throw Bottle and Boss energy bar
+ * 
+ * 
+ */
 function drawSideElements() {
     drawGallinitas();
     drawPollitos();
@@ -24,6 +42,11 @@ function drawSideElements() {
     drawBossEnergyBar();
 }
 
+
+/**
+ * draw Backgroung elements
+ * 
+ */
 function drawbackground() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     drawSky();
@@ -73,6 +96,12 @@ function drawGround() {
     }
 }
 
+
+/**
+ * 
+ * update cahracter
+ * 
+ */
 function updateCharacter() {
     let base_image = new Image();
     base_image.src = currentCharacterImg;
@@ -100,6 +129,8 @@ function updateCharacter() {
     }
 }
 
+
+
 function drawGallinitas() {
     for (let index = 0; index < gallinitas.length; index++) {
         const gallinita = gallinitas[index];
@@ -115,6 +146,8 @@ function drawGallinitas() {
     }
 }
 
+
+
 function drawPollitos() {
     for (let index = 0; index < pollitos.length; index++) {
         const pollito = pollitos[index];
@@ -129,6 +162,8 @@ function drawPollitos() {
         );
     }
 }
+
+
 
 function drawBottles() {
     for (let i = 0; i < placedBottles.length; i++) {

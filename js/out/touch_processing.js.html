@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: touch_processing.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: touch_processing.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Script for detecting finger touch on mobile devices
+ */
+
+function startupMobileListeners() {
+    document.addEventListener('touchstart', handleStart, false);
+    document.addEventListener('touchend', handleEnd, false);
+    document.addEventListener('touchmove', handleMove, false);
+}
+
+/**
+ * Detect and handle touch-start on mobile; open fullscreen when user touch detected
+ * @param {string} e - touch event 
+ */
+function handleStart(e) {
+    // document.documentElement.requestFullscreen();
+    for (let i = 0; i &lt; e.touches.length; i++) {
+        if (e &amp;&amp; window.innerWidth > 450) {
+            touchpointX = e.touches[i].clientX;
+            touchpointY = e.touches[i].clientY;
+        } else {
+            changeTouchpointRef(e, i)
+        }
+        moveOnMobile();
+    }
+}
+
+/**
+ * Change reference for x- and y-coordinates
+ * @param {string} e - touch event
+ * @param {number} i - index of touch-event
+ */
+function changeTouchpointRef(e, i) {
+    // reference points for x and y-movement on canvas are flipped on small screens due to forced canvas rotation by 90deg
+    // touchpoint-references need to be flipped in portrait-view 
+    touchpointX = e.touches[i].clientY;
+    touchpointY = e.touches[i].clientX;
+}
+
+
+/**
+ * Stop character-movement when touch ended
+ */
+function handleEnd() {
+    isMovingLeft = false;
+    isMovingRight = false;
+}
+
+/**
+ * Detect and handle touch-move on mobile
+ * @param {string} e - touch event
+ */
+function handleMove(e) {
+    for (let i = 0; i &lt; e.touches.length; i++) {
+        let touchpointY = e.touches[i].pageY;
+        Y_touchpoints.push(touchpointY);
+    }
+    checkForJump();
+}
+
+function checkForJump() {
+    let heightDifference = Y_touchpoints[0] - Y_touchpoints[Y_touchpoints.length - 1];
+
+    // trigger jump when touchmove exceeds 80px in y-direction and character isn't wounded
+    if (heightDifference >= 50) {
+        triggerJump();
+    }
+}
+/**
+ * Simulate keydown-event when jump is triggered on mobile
+ */
+function triggerJump() {
+    document.dispatchEvent(
+        new KeyboardEvent("keydown", {
+            code: 'Space'
+        })
+    );
+}
+
+/**
+ * Move character on mobile by detection &amp; localization of finger touch
+ */
+function moveOnMobile() {
+    touchStart();
+    let relativeCharacterPosition = (character_x + characterWidth / 2) / canvas.width; // relative character-position on canvas
+    let absoluteCharacterPosition = relativeCharacterPosition * $(window).width(); // absolute character-position on mobile screen in px
+    detectMovingDirection(absoluteCharacterPosition);
+}
+
+/**
+ * Detect moving direction of character depending on point of touch on screen
+ * @param {number} absoluteCharacterPosition - x-position of character on current screen in px
+ */
+function detectMovingDirection(absoluteCharacterPosition) {
+    if (touchpointX &lt; absoluteCharacterPosition) { // move left if touch is placed left from character
+        isMovingLeft = true;
+    } else if (touchpointX >= absoluteCharacterPosition) { // move right if touch is placed right from character
+        isMovingRight = true;
+    }
+}
+
+/**
+ * Detect time of touch-start to identify single &amp; double-taps
+ */
+function touchStart() {
+    if (clickTimer == null) {
+        clickTimer = setTimeout(function() {
+            clickTimer = null;
+        }, 500)
+    } else {
+        detectDoubleTap();
+    }
+}
+
+function detectDoubleTap() {
+    clearTimeout(clickTimer);
+    clickTimer = null;
+    document.dispatchEvent(
+        new KeyboardEvent("keydown", {
+            key: 'd'
+        })
+    );
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#adaptBossMovements">adaptBossMovements</a></li><li><a href="global.html#animateAttackingBoss">animateAttackingBoss</a></li><li><a href="global.html#animateBossDefeat">animateBossDefeat</a></li><li><a href="global.html#animateCharacter">animateCharacter</a></li><li><a href="global.html#animateGameStartNFinish">animateGameStartNFinish</a></li><li><a href="global.html#animateWalkingBoss">animateWalkingBoss</a></li><li><a href="global.html#animateWoundedBoss">animateWoundedBoss</a></li><li><a href="global.html#calculateCloudOffSet">calculateCloudOffSet</a></li><li><a href="global.html#calculateDrawingDetails">calculateDrawingDetails</a></li><li><a href="global.html#calculateGallinitaPosition">calculateGallinitaPosition</a></li><li><a href="global.html#calculatePatrollingBoss">calculatePatrollingBoss</a></li><li><a href="global.html#calculatePollitoPostion">calculatePollitoPostion</a></li><li><a href="global.html#changeBossAnimations">changeBossAnimations</a></li><li><a href="global.html#changeTouchpointRef">changeTouchpointRef</a></li><li><a href="global.html#checkBackgroundImageCache">checkBackgroundImageCache</a></li><li><a href="global.html#checkBossBottleCollison">checkBossBottleCollison</a></li><li><a href="global.html#checkBossCollision">checkBossCollision</a></li><li><a href="global.html#checkBottleCollison">checkBottleCollison</a></li><li><a href="global.html#checkCollisionCondition">checkCollisionCondition</a></li><li><a href="global.html#checkForCollision">checkForCollision</a></li><li><a href="global.html#checkForGallinitas">checkForGallinitas</a></li><li><a href="global.html#checkForPollintos">checkForPollintos</a></li><li><a href="global.html#checkForSleep">checkForSleep</a></li><li><a href="global.html#checkGallinitasCollison">checkGallinitasCollison</a></li><li><a href="global.html#checkPollitosCollison">checkPollitosCollison</a></li><li><a href="global.html#createGallinitasList">createGallinitasList</a></li><li><a href="global.html#createPollintosList">createPollintosList</a></li><li><a href="global.html#detectMovingDirection">detectMovingDirection</a></li><li><a href="global.html#draw">draw</a></li><li><a href="global.html#drawbackground">drawbackground</a></li><li><a href="global.html#drawFinalScreen">drawFinalScreen</a></li><li><a href="global.html#drawSideElements">drawSideElements</a></li><li><a href="global.html#gameOver">gameOver</a></li><li><a href="global.html#handleEnd">handleEnd</a></li><li><a href="global.html#handleMove">handleMove</a></li><li><a href="global.html#handleStart">handleStart</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#listenForKeys">listenForKeys</a></li><li><a href="global.html#moveOnMobile">moveOnMobile</a></li><li><a href="global.html#preloadImages">preloadImages</a></li><li><a href="global.html#prepareNotification">prepareNotification</a></li><li><a href="global.html#runGame">runGame</a></li><li><a href="global.html#startGame">startGame</a></li><li><a href="global.html#startupMobileListeners">startupMobileListeners</a></li><li><a href="global.html#stopjump">stopjump</a></li><li><a href="global.html#stopthrowbottle">stopthrowbottle</a></li><li><a href="global.html#touchStart">touchStart</a></li><li><a href="global.html#triggerJump">triggerJump</a></li><li><a href="global.html#updateCharacter">updateCharacter</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Mar 05 2021 15:35:56 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

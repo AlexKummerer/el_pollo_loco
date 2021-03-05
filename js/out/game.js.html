@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: game.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: game.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * 
  * Preload function
  */
@@ -87,7 +115,7 @@ function reduceCharacterEnergy() {
     if (bossAttack) {
         character_energy = 0; // immediate death when character collides with boss
     }
-    if (character_energy <= 0) {
+    if (character_energy &lt;= 0) {
         gameOver();
     }
 }
@@ -95,7 +123,7 @@ function reduceCharacterEnergy() {
 
 /**
  * 
- * if character enery <0
+ * if character enery &lt;0
  * 
  */
 function gameOver() {
@@ -113,10 +141,10 @@ function gameOver() {
  * 
  */
 function checkPollitosCollison() {
-    for (let i = 0; i < pollitos.length; i++) {
+    for (let i = 0; i &lt; pollitos.length; i++) {
         const pollito = pollitos[i];
         const pollito_x = pollito.position_x + bg_elements;
-        if (pollito_x - 40 < character_x && pollito_x + 40 > character_x) {
+        if (pollito_x - 40 &lt; character_x &amp;&amp; pollito_x + 40 > character_x) {
             if (character_y > 110) {
                 if (character_energy >= 0) {
                     reduceCharacterEnergy();
@@ -133,10 +161,10 @@ function checkPollitosCollison() {
  * 
  */
 function checkGallinitasCollison() {
-    for (let i = 0; i < gallinitas.length; i++) {
+    for (let i = 0; i &lt; gallinitas.length; i++) {
         const gallinita = gallinitas[i];
         const gallinita_x = gallinita.position_x + bg_elements;
-        if (gallinita_x - 40 < character_x && gallinita_x + 40 > character_x) {
+        if (gallinita_x - 40 &lt; character_x &amp;&amp; gallinita_x + 40 > character_x) {
             if (character_y > 110) {
                 if (character_energy >= 0) {
                     reduceCharacterEnergy();
@@ -155,9 +183,9 @@ function checkGallinitasCollison() {
  * 
  */
 function checkBottleCollison() {
-    for (let i = 0; i < placedBottles.length; i++) {
+    for (let i = 0; i &lt; placedBottles.length; i++) {
         const bottle_X = placedBottles[i] + bg_elements;
-        if (bottle_X - 40 < character_x && bottle_X + 40 > character_x) {
+        if (bottle_X - 40 &lt; character_x &amp;&amp; bottle_X + 40 > character_x) {
             if (character_y > 110) {
                 placedBottles.splice(i, 1);
                 AUDIO_BOTTLE.play();
@@ -190,7 +218,7 @@ function checkBossBottleCollison() {
         BOSS_HEIGHT
     );
 
-    if (collisionTrue && !bossIsWounded) {
+    if (collisionTrue &amp;&amp; !bossIsWounded) {
         AUDIO_CRACK.play();
         hurtBossAnimation();
     }
@@ -207,8 +235,8 @@ function reduceBossEnergy() {
         finalBoss_energy -= COLLISION_ENERGY_LOSS;
         bossIsWounded = true;
     }
-    // Trigger levelFinish-Animation if boss energy <= 0
-    if (finalBoss_energy <= 0 && bossDefeatedAt == 0) {
+    // Trigger levelFinish-Animation if boss energy &lt;= 0
+    if (finalBoss_energy &lt;= 0 &amp;&amp; bossDefeatedAt == 0) {
         bossDefeatedAt = new Date().getTime();
         bossIsDead = true;
 
@@ -217,7 +245,7 @@ function reduceBossEnergy() {
 }
 
 /**
- * General function to check if collision has happened between two elements according to x- & y-coordinates
+ * General function to check if collision has happened between two elements according to x- &amp; y-coordinates
  *
  * @param {number} collider_1_x - x-coordinate of the 1st collision element
  * @param {number} collider_1_width - width of the 1st collision element
@@ -240,13 +268,13 @@ function checkCollisionCondition(
 ) {
     // defines range for x-position in which collision is detected
     let x_condition =
-        collider_1_x - collider_1_width / 2 < collider_2_x + collider_2_width / 2 &&
+        collider_1_x - collider_1_width / 2 &lt; collider_2_x + collider_2_width / 2 &amp;&amp;
         collider_1_x + collider_1_width / 2 > collider_2_x - collider_2_width / 2;
     // defines range for y-position in which collision is detected
     let y_condition =
-        collider_1_y + collider_1_height > collider_2_y &&
-        collider_1_y < collider_2_y + collider_2_height;
-    return x_condition && y_condition;
+        collider_1_y + collider_1_height > collider_2_y &amp;&amp;
+        collider_1_y &lt; collider_2_y + collider_2_height;
+    return x_condition &amp;&amp; y_condition;
 }
 
 function finishLevel() {
@@ -364,7 +392,7 @@ function listenForKeys() {
             moveleft();
         }
 
-        if (k == "d" && collectedBottles > 0 && !directionLeft) {
+        if (k == "d" &amp;&amp; collectedBottles > 0 &amp;&amp; !directionLeft) {
             throwbottle();
         }
 
@@ -381,7 +409,7 @@ function listenForKeys() {
         if (k == "ArrowLeft") {
             stopmoveleft();
         }
-        if (e.code == "Space" && !isDead) {
+        if (e.code == "Space" &amp;&amp; !isDead) {
             stopjump();
         }
         if (k == "d") {
@@ -431,7 +459,7 @@ function stopthrowbottle() {
 function jump() {
     AUDIO_JUMP.play();
     let timePassedSinceJump = new Date().getTime() - lastJumpStarted;
-    if (timePassedSinceJump > JUMP_TIME * 2 && !isHurt) {
+    if (timePassedSinceJump > JUMP_TIME * 2 &amp;&amp; !isHurt) {
         isJumping = true;
         lastJumpStarted = new Date().getTime();
         lastKeyPressed = 0;
@@ -450,7 +478,7 @@ function stopjump() {
 
 function turnSoundandMusicOff() {
     document.addEventListener("keydown", (e) => {
-        if (e.key == "m" && soundIsOn) {
+        if (e.key == "m" &amp;&amp; soundIsOn) {
             AUDIO_RUNNING.muted = true;
             AUDIO_JUMP.muted = true;
             AUDIO_BOTTLE.muted = true;
@@ -470,7 +498,7 @@ function turnSoundandMusicOff() {
             }, 100);
         }
 
-        if (e.key == "m" && soundIsOff) {
+        if (e.key == "m" &amp;&amp; soundIsOff) {
             AUDIO_RUNNING.muted = false;
             AUDIO_JUMP.muted = false;
             AUDIO_BOTTLE.muted = false;
@@ -489,4 +517,26 @@ function turnSoundandMusicOff() {
             }, 100);
         }
     });
-}
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#adaptBossMovements">adaptBossMovements</a></li><li><a href="global.html#animateAttackingBoss">animateAttackingBoss</a></li><li><a href="global.html#animateBossDefeat">animateBossDefeat</a></li><li><a href="global.html#animateCharacter">animateCharacter</a></li><li><a href="global.html#animateGameStartNFinish">animateGameStartNFinish</a></li><li><a href="global.html#animateWalkingBoss">animateWalkingBoss</a></li><li><a href="global.html#animateWoundedBoss">animateWoundedBoss</a></li><li><a href="global.html#calculateCloudOffSet">calculateCloudOffSet</a></li><li><a href="global.html#calculateDrawingDetails">calculateDrawingDetails</a></li><li><a href="global.html#calculateGallinitaPosition">calculateGallinitaPosition</a></li><li><a href="global.html#calculatePatrollingBoss">calculatePatrollingBoss</a></li><li><a href="global.html#calculatePollitoPostion">calculatePollitoPostion</a></li><li><a href="global.html#changeBossAnimations">changeBossAnimations</a></li><li><a href="global.html#changeTouchpointRef">changeTouchpointRef</a></li><li><a href="global.html#checkBackgroundImageCache">checkBackgroundImageCache</a></li><li><a href="global.html#checkBossBottleCollison">checkBossBottleCollison</a></li><li><a href="global.html#checkBossCollision">checkBossCollision</a></li><li><a href="global.html#checkBottleCollison">checkBottleCollison</a></li><li><a href="global.html#checkCollisionCondition">checkCollisionCondition</a></li><li><a href="global.html#checkForCollision">checkForCollision</a></li><li><a href="global.html#checkForGallinitas">checkForGallinitas</a></li><li><a href="global.html#checkForPollintos">checkForPollintos</a></li><li><a href="global.html#checkForSleep">checkForSleep</a></li><li><a href="global.html#checkGallinitasCollison">checkGallinitasCollison</a></li><li><a href="global.html#checkPollitosCollison">checkPollitosCollison</a></li><li><a href="global.html#createGallinitasList">createGallinitasList</a></li><li><a href="global.html#createPollintosList">createPollintosList</a></li><li><a href="global.html#detectMovingDirection">detectMovingDirection</a></li><li><a href="global.html#draw">draw</a></li><li><a href="global.html#drawbackground">drawbackground</a></li><li><a href="global.html#drawFinalScreen">drawFinalScreen</a></li><li><a href="global.html#drawSideElements">drawSideElements</a></li><li><a href="global.html#gameOver">gameOver</a></li><li><a href="global.html#handleEnd">handleEnd</a></li><li><a href="global.html#handleMove">handleMove</a></li><li><a href="global.html#handleStart">handleStart</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#listenForKeys">listenForKeys</a></li><li><a href="global.html#moveOnMobile">moveOnMobile</a></li><li><a href="global.html#preloadImages">preloadImages</a></li><li><a href="global.html#prepareNotification">prepareNotification</a></li><li><a href="global.html#runGame">runGame</a></li><li><a href="global.html#startGame">startGame</a></li><li><a href="global.html#startupMobileListeners">startupMobileListeners</a></li><li><a href="global.html#stopjump">stopjump</a></li><li><a href="global.html#stopthrowbottle">stopthrowbottle</a></li><li><a href="global.html#touchStart">touchStart</a></li><li><a href="global.html#triggerJump">triggerJump</a></li><li><a href="global.html#updateCharacter">updateCharacter</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Mar 05 2021 15:35:56 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
