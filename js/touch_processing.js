@@ -10,10 +10,9 @@ function startupMobileListeners() {
 
 /**
  * Detect and handle touch-start on mobile; open fullscreen when user touch detected
- * @param {string} e - touch event 
+ * @param {TouchEvent} e - touch event 
  */
 function handleStart(e) {
-    // document.documentElement.requestFullscreen();
     for (let i = 0; i < e.touches.length; i++) {
         if (e && window.innerWidth > 450) {
             touchpointX = e.touches[i].clientX;
@@ -27,16 +26,13 @@ function handleStart(e) {
 
 /**
  * Change reference for x- and y-coordinates
- * @param {string} e - touch event
+ * @param {TouchEvent} e - touch event
  * @param {number} i - index of touch-event
  */
 function changeTouchpointRef(e, i) {
-    // reference points for x and y-movement on canvas are flipped on small screens due to forced canvas rotation by 90deg
-    // touchpoint-references need to be flipped in portrait-view 
     touchpointX = e.touches[i].clientY;
     touchpointY = e.touches[i].clientX;
 }
-
 
 /**
  * Stop character-movement when touch ended
@@ -48,7 +44,7 @@ function handleEnd() {
 
 /**
  * Detect and handle touch-move on mobile
- * @param {string} e - touch event
+ * @param {TouchEvent} e - touch event
  */
 function handleMove(e) {
     for (let i = 0; i < e.touches.length; i++) {
@@ -66,6 +62,7 @@ function checkForJump() {
         triggerJump();
     }
 }
+
 /**
  * Simulate keydown-event when jump is triggered on mobile
  */

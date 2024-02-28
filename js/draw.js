@@ -1,36 +1,27 @@
 /**
- * 
- * Draw all game details
- * 
+ * Hauptfunktion zum Zeichnen des Spiels
  */
 function draw() {
-    drawbackground();
-    drawFinalBoss2();
-    animateGameStartNFinish();
-    updateCharacter();
+    drawBackground();
+    animateGame();
     requestAnimationFrame(draw);
 }
 
-
 /**
- * 
- * animation if gamestarted or gemaFinished
- * 
+ * Funktion zur Animation des Spiels
  */
-function animateGameStartNFinish() {
+function animateGame() {
     if (gameFinished || isDead) {
         drawFinalScreen();
     } else if (gameStarted) {
         drawSideElements();
+        updateCharacter();
+        drawFinalBoss2()
     }
 }
 
-
 /**
- * 
- * drwa Gallinitas,pollitos, bootles, energybar, bottleinfotmation, throw Bottle and Boss energy bar
- * 
- * 
+ * Funktion zum Zeichnen von Hintergrund und Elementen an den Seiten
  */
 function drawSideElements() {
     drawGallinitas();
@@ -42,12 +33,10 @@ function drawSideElements() {
     drawBossEnergyBar();
 }
 
-
 /**
- * draw Backgroung elements
- * 
+ * Funktion zum Zeichnen des Hintergrunds
  */
-function drawbackground() {
+function drawBackground() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     drawSky();
     drawHills();
@@ -57,27 +46,27 @@ function drawbackground() {
 }
 
 function drawSky() {
-    for (let i = -1; i < 3; i++) {
+    [-1, 0, 1, 2].forEach(i => {
         addBackgroundObject("img/sky.png", i * 1900, 0, 1, 1);
-    }
+    });
 }
 
 function drawHills() {
-    for (let i = -1; i < 2; i++) {
+    [-1, 0, 1].forEach(i => {
         addBackgroundObject("img/bg_2.png", i * 2300, -220, 0.6);
-    }
+    });
 }
 
 function drawShadows() {
-    for (let i = -1; i < 2; i++) {
+    [-1, 0, 1].forEach(i => {
         addBackgroundObject("img/bg_1.png", i * 2304, -200, 0.6);
-    }
+    });
 }
 
 function drawClouds() {
-    for (let i = -1; i < 3; i++) {
+    [-1, 0, 1, 2].forEach(i => {
         addBackgroundObject("img/clouds.png", i * 1920 - cloudOffSet, -40, 0.4, 1);
-    }
+    });
 }
 
 function drawGround() {
@@ -96,11 +85,8 @@ function drawGround() {
     }
 }
 
-
 /**
- * 
- * update cahracter
- * 
+ * Funktion zum Zeichnen des Charakters
  */
 function updateCharacter() {
     let base_image = new Image();
@@ -110,12 +96,9 @@ function updateCharacter() {
 
     let timePassedSinceJump = new Date().getTime() - lastJumpStarted;
     if (timePassedSinceJump < JUMP_TIME) {
-        character_y = character_y - 10;
-    } else {
-        // check Falling
-        if (character_y < 115) {
-            character_y = character_y + 10;
-        }
+        character_y -= 10;
+    } else if (character_y < 115) {
+        character_y += 10;
     }
 
     if (base_image.complete) {
@@ -130,37 +113,28 @@ function updateCharacter() {
 }
 
 
-
 function drawGallinitas() {
-    for (let index = 0; index < gallinitas.length; index++) {
-        const gallinita = gallinitas[index];
-        let base_image = currentGallinita;
-
+    gallinitas.forEach(gallinita => {
         addBackgroundObject(
-            base_image,
+            currentGallinita,
             gallinita.position_x,
             gallinita.position_y,
             gallinita.scale,
             1
         );
-    }
+    });
 }
 
-
-
 function drawPollitos() {
-    for (let index = 0; index < pollitos.length; index++) {
-        const pollito = pollitos[index];
-        let base_image = currentPollito;
-
+    pollitos.forEach(pollito => {
         addBackgroundObject(
-            base_image,
+            currentPollito,
             pollito.position_x,
             pollito.position_y + 8,
             pollito.scale,
             1
         );
-    }
+    });
 }
 
 
@@ -173,35 +147,30 @@ function drawBottles() {
 }
 
 function drawEnergyBar() {
-    let base_image = new Image();
-    base_image.src = "img/vidas.png";
-    if (base_image.complete) {
-        ctx.drawImage(
-            base_image,
-            15,
-            65,
-            base_image.width * 0.35,
-            base_image.height * 0.35
-        );
-    }
-    ctx.font = "40px Bradley Hand ITC";
-    ctx.fillText("x " + character_energy, 65, 105);
+    drawImageWithText("img/vidas.png", 15, 65, 0.35, character_energy, 65, 105);
 }
 
 function drawBottleInformation() {
+    drawImageWithText("img/tabasco.png", 15, 15, 0.15, collectedBottles, 65, 55);
+}
+
+function drawImageWithText(imageSrc, imageX, imageY, imageScale, textValue, textX, textY) {
     let base_image = new Image();
-    base_image.src = "img/tabasco.png";
+    base_image.src = imageSrc; 
+
     if (base_image.complete) {
         ctx.drawImage(
             base_image,
-            15,
-            15,
-            base_image.width * 0.15,
-            base_image.height * 0.15
+            imageX,
+            imageY,
+            base_image.width * imageScale,
+            base_image.height * imageScale
         );
-    }
-    ctx.font = "40px Bradley Hand ITC";
-    ctx.fillText("x " + collectedBottles, 65, 55);
+        ctx.font = "40px Bradley Hand ITC";
+        ctx.fillText("x " + textValue, textX, textY);
+    };
+
+    console.log(base_image.src, textValue, textX, textY);
 }
 
 function drawThrowBottle() {

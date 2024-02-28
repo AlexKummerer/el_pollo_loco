@@ -151,6 +151,7 @@ let characterWidth;
 let isWounded = false;
 let timeOfCollision = 0;
 let soundIsOn = true
+let soundIsOff = false
 
 // touch_processing.js variables
 let touchpointX;
